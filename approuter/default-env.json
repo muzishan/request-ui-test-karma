@@ -1,0 +1,14 @@
+{
+	"destinations": [
+		{
+			"name": "custom_frontend_dest",
+			"url": "http://localhost:8080/",
+			"forwardAuthToken": true
+		},
+		{
+			"name": "custom_backend_dest",
+			"url": "https://e5r2s14-lto-special-discount-request-srv.cfapps.eu20.hana.ondemand.com",
+			"forwardAuthToken": true
+		}
+	]
+}

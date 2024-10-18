@@ -1,0 +1,153 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="productDialog"
+        title="{
+                        parts: [
+                            'productCreateModel>/isEdit',
+                            'i18n>productDialogAdd',
+                            'i18n>productDialogUpdate'
+                        ],
+                        formatter: '.formatter.formatDialogTitle'
+                    }"
+        verticalScrolling="true"
+        contentWidth="800px"
+    >
+        <l:SimpleForm
+            id="simpleForm"
+            editable="true"
+            labelSpanXL="5"  
+            labelSpanL="5"   
+            labelSpanM="3"    
+            labelSpanS="5"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="seriesDialogLabel"
+                text="{i18n>series}"
+            />
+            <Input
+                id="seriesDialogInput"
+                placeholder="{i18n>enterSeries}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidSeries}"
+                value="{
+                            path: 'productCreateModel>/series', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="seriesDescDialogLabel"
+                text="{i18n>seriesDescription}"
+            />
+            <Input
+                id="seriesDescDialogInput"
+                placeholder="{i18n>enterSeriesDescription}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidSeriesDescription}"
+                value="{
+                            path: 'productCreateModel>/seriesDescription', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 1
+                            }
+                       }"
+            />
+            <Label
+                id="productCodeDialogLabel"
+                text="{i18n>productCode}"
+            />
+            <Input
+                id="productCodeDialogInput"
+                placeholder="{i18n>enterProductCode}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidProductCode}"
+                value="{
+                            path: 'productCreateModel>/productCode', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+								minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="productDescDialogLabel"
+                text="{i18n>description}"
+            />
+            <Input 
+                id="productDescDialogInput"
+                placeholder="{i18n>enterProductDescription}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidProductDescription}"
+                value="{
+                            path: 'productCreateModel>/description', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+								minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="brandDialogSelectLabel"
+                text="{i18n>brand}"
+            />
+            <Select id="brandDialogSelect" required="true" selectedKey="{productCreateModel>/brand}">
+                <core:Item id="_IDGenItem2" key="LMH" text="LMH" />
+                <core:Item id="_IDGenItem3" key="STILL" text="STILL" />
+            </Select>
+            <Label
+                id="isActiveDialogLabel"
+                text="{i18n>isActive}"
+            />
+            <CheckBox
+                id="isActiveDialogCheckbox"
+                selected="{path: 'productCreateModel>/active', type: 'sap.ui.model.type.Boolean'}"
+            />
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="productDialogFooter">
+                <Button
+                    id="productDialogMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="productDialogToolbarSpacer" />
+                <Button
+                    id="saveButton"
+                    text="{
+                        parts: [
+                            'productCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onProductDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeDialogButton"
+                    text="{i18n>close}"
+                    press=".onProductDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

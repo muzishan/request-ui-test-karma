@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="com.kion.sdr.api.UserService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Users" EntityType="com.kion.sdr.api.UserService.Users">
+          <NavigationPropertyBinding Path="salesOffices" Target="UserSalesOffices"/>
+        </EntitySet>
+        <EntitySet Name="UserSalesOffices" EntityType="com.kion.sdr.api.UserService.UserSalesOffices">
+          <NavigationPropertyBinding Path="user" Target="Users"/>
+        </EntitySet>
+        <FunctionImport Name="getCurrentUser" Function="com.kion.sdr.api.UserService.getCurrentUser"/>
+      </EntityContainer>
+      <EntityType Name="Users">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="firstName" Type="Edm.String" MaxLength="50"/>
+        <Property Name="lastName" Type="Edm.String" MaxLength="50"/>
+        <Property Name="email" Type="Edm.String" MaxLength="50"/>
+        <Property Name="IKA" Type="Edm.Boolean" DefaultValue="false"/>
+        <NavigationProperty Name="salesOffices" Type="Collection(com.kion.sdr.api.UserService.UserSalesOffices)" Partner="user">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="UserSalesOffices">
+        <Key>
+          <PropertyRef Name="user_ID"/>
+          <PropertyRef Name="salesOffice_ID"/>
+        </Key>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <NavigationProperty Name="user" Type="com.kion.sdr.api.UserService.Users" Partner="salesOffices">
+          <ReferentialConstraint Property="user_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="user_ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="salesOffice_ID" Type="Edm.Guid" Nullable="false"/>
+      </EntityType>
+      <ComplexType Name="com_kion_sdr_api_resource_response_UserInfoResponse">
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="firstName" Type="Edm.String"/>
+        <Property Name="lastName" Type="Edm.String"/>
+        <Property Name="email" Type="Edm.String"/>
+        <Property Name="systemUser" Type="Edm.Boolean"/>
+        <Property Name="internalUser" Type="Edm.Boolean"/>
+        <Property Name="roles" Type="Collection(Edm.String)" Nullable="false"/>
+      </ComplexType>
+      <Function Name="getCurrentUser" IsBound="false" IsComposable="false">
+        <ReturnType Type="com.kion.sdr.api.UserService.com_kion_sdr_api_resource_response_UserInfoResponse"/>
+      </Function>
+      <Annotations Target="com.kion.sdr.api.UserService.Users">
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.Users/createdAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Created On"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.Users/createdBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Common.Label" String="Created By"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.Users/modifiedAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Changed On"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.Users/modifiedBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Common.Label" String="Changed By"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.UserSalesOffices">
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.UserSalesOffices/createdAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Created On"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.UserSalesOffices/createdBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Common.Label" String="Created By"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.UserSalesOffices/modifiedAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Changed On"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.UserSalesOffices/modifiedBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="A user's unique ID"/>
+        <Annotation Term="Common.Label" String="Changed By"/>
+      </Annotations>
+      <Annotations Target="com.kion.sdr.api.UserService.getCurrentUser()">
+        <Annotation Term="Core.Description" String="Get the current authenticated user"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
