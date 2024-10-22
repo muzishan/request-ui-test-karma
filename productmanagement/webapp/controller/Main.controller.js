@@ -17,6 +17,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
     return Controller.extend("com.kion.sdr.ui.productmanagement.controller.Main", {
         formatter: Formatter,
         onInit: function () {
+            this.initMessaging();
             AjaxHelper.initInterceptor();
             this.oTable = this.byId("tableProducts");
             const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
@@ -61,11 +62,24 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             if (!hasError) {
                 const oData = oDataModel.getData();
                 if (oData.isEdit) {
-                    CRUDHelper.updateProductContext(this, oData);
+                    CRUDHelper.updateProductContext(this, oData)
+                        .then(() => {
+                            oEvent.getSource().getParent().getParent().destroy();
+                        })
+                        .catch((error) => {
+                            const popOverBtn = this.getView().byId("saveMsgBtn");
+                            this.initializePopOver(popOverBtn);
+                        });
                 } else {
-                    CRUDHelper.createProductContext(this, oData);
+                    CRUDHelper.createProductContext(this, oData)
+                        .then(() => {
+                            oEvent.getSource().getParent().getParent().destroy();
+                        })
+                        .catch((error) => {
+                            const popOverBtn = this.getView().byId("saveMsgBtn");
+                            this.initializePopOver(popOverBtn);
+                        });
                 }
-                oEvent.getSource().getParent().getParent().destroy();
             }
         },
         onProductDialogClosePress: function (oEvent) {
@@ -85,7 +99,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             const that = this;
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
 
-            const sProductCode = oBindingContext.getProperty("productCode")
+            const sProductCode = oBindingContext.getProperty("productCode");
             const sConfirmMessage = oResourceBundle.getText("confirmTheDeletion", [sProductCode]);
 
             MessageBox.confirm(sConfirmMessage, {
@@ -164,11 +178,11 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                 aFilters.push(new sap.ui.model.Filter({
                     path: "brand",
                     operator: sap.ui.model.FilterOperator.EQ,
-                    value1: sBrand,
+                    value1: sBrand
                 }));
             }
             if (sStatus) {
-                let bActive = sStatus === "true";
+                const bActive = sStatus === "true";
                 aFilters.push(new sap.ui.model.Filter("active", sap.ui.model.FilterOperator.EQ, bActive));
             }
             oBinding.filter(aFilters);
@@ -238,8 +252,8 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             this.getView().byId("seriesDescInput").setValue("");
             this.getView().byId("productCodesInput").setValue("");
             this.getView().byId("productCodesDescInput").setValue("");
-            
-           
+
+
             this.getView().byId("brandInput").setSelectedKey("");
             this.getView().byId("statusSelect").setSelectedKey("");
             this.onSearch();
