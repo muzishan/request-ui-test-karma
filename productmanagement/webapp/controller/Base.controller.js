@@ -64,8 +64,8 @@ sap.ui.define(
                     100
                 );
             },
-            isPositionable : function (sControlId) {
-                return sControlId && sControlId.length > 0;
+            isPositionable: function (sControlId) {
+                return !!(sControlId && sControlId.length > 0);
             }
         });
     }
