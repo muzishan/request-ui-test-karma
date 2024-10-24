@@ -24,11 +24,12 @@
                 inset="false"
                 items="{
                     path: '/ProductCodes',
-                    sorter: { path: 'createdAt', descending: true }
+                    sorter: { path: 'createdAt', descending: true },
+                    events: { createCompleted: '.createProductCompleted'}
                 }"
                 growingThreshold="100"
                 growing="true"
-                mode="{= ${currentUserModel>/isViewer} ? 'None' : 'MultiSelect'}"
+                mode="{= ${currentUserModel>/isAdmin} ? 'MultiSelect' : 'None'}"
                 selectionChange=".onSelectionChange"
             >
                 <headerToolbar>
@@ -44,7 +45,7 @@
                             id="addButton"
                             icon="sap-icon://add"
                             press=".onPressCreateButton"
-                            visible="{= !${currentUserModel>/isViewer}}"
+                            visible="{= ${currentUserModel>/isAdmin}}"
                         />
                         <Button 
                             id="clearFilters" 
@@ -55,7 +56,7 @@
                         <Button
                             id="deleteButton"
                             icon="sap-icon://delete"
-                            press=".onPressDeleteButton"
+                            press=".onPressBulkDeleteButton"
                             visible="false"
                         />
                         <Button 
@@ -200,7 +201,7 @@
                                 id="txtIsActive"
                                 text="{path : 'active', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatStatus'}"
                             />
-                            <Toolbar id="Toolbar" visible="{= !${currentUserModel>/isViewer}}">
+                            <Toolbar id="Toolbar" visible="{= ${currentUserModel>/isAdmin}}">
                                 <Button
                                     id="editButton"
                                     icon="sap-icon://edit-outside"

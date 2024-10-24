@@ -25,14 +25,11 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         },
         onObjectMatched: async function () {
             const currentUser = await AjaxHelper.getCurrentUser(this);
-            let isViewer = false;
-            if (
-                !currentUser.roles.some((role) => role.includes("SDR_Admins") || role.includes("SDR_Requesters") || role.includes("SDR_Approvers")) &&
-                currentUser.roles.some((role) => role.includes("SDR_Viewers"))
-            ) {
-                isViewer = true;
+            let isAdmin = false;
+            if (currentUser.roles.some((role) => role.includes("SDR_Admins"))) {
+                isAdmin = true;
             }
-            this.getView().setModel(new JSONModel({ isViewer }), "currentUserModel");
+            this.getView().setModel(new JSONModel({ isAdmin }), "currentUserModel");
         },
         onPressCreateButton: function (oEvent) {
             this.removeAllMessages();
@@ -63,28 +60,23 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                 const oData = oDataModel.getData();
                 if (oData.isEdit) {
                     CRUDHelper.updateProductContext(this, oData)
-                        .then(() => {
-                            oEvent.getSource().getParent().getParent().destroy();
-                        })
-                        .catch((error) => {
-                            const popOverBtn = this.getView().byId("saveMsgBtn");
-                            this.initializePopOver(popOverBtn);
-                        });
                 } else {
                     CRUDHelper.createProductContext(this, oData)
-                        .then(() => {
-                            oEvent.getSource().getParent().getParent().destroy();
-                        })
-                        .catch((error) => {
-                            const popOverBtn = this.getView().byId("saveMsgBtn");
-                            this.initializePopOver(popOverBtn);
-                        });
                 }
             }
         },
         onProductDialogClosePress: function (oEvent) {
             this.removeAllMessages();
             oEvent.getSource().getParent().getParent().destroy();
+            this.oTable.getBinding('items').resetChanges();
+        },
+        createProductCompleted: function (oEvent) {
+            if (oEvent.getParameter("success")) {
+                this.oProductDialog.close();
+            } else {
+                this.oTable.getBinding('items').resetChanges();
+                this.onRefreshButtonPressed();
+            }
         },
         onSelectionChange: function () {
             const oTable = this.getView().byId("tableProducts");
@@ -113,9 +105,24 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                 }
             });
         },
+        onPressBulkDeleteButton: function () {
+            const that = this;
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+
+            MessageBox.confirm(oResourceBundle.getText("confirmBulkDeletion"), {
+                icon: MessageBox.Icon.WARNING,
+                title: oResourceBundle.getText("deleteConfirmTitle"),
+                actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                onClose: function (res) {
+                    if (res === MessageBox.Action.OK) {
+                        CRUDHelper.deleteProductContext(that);
+                    }
+                }
+            });
+        },
         onRefreshButtonPressed: function () {
-                const oBinding = this.oTable.getBinding("items");
-                oBinding.refresh();
+            const oBinding = this.oTable.getBinding("items");
+            oBinding.refresh();
         },
         onPressEditButton: function (oEvent) {
             this.removeAllMessages();
