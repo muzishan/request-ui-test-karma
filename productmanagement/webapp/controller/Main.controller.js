@@ -59,9 +59,9 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             if (!hasError) {
                 const oData = oDataModel.getData();
                 if (oData.isEdit) {
-                    CRUDHelper.updateProductContext(this, oData)
+                    CRUDHelper.updateProductContext(this, oData);
                 } else {
-                    CRUDHelper.createProductContext(this, oData)
+                    CRUDHelper.createProductContext(this, oData);
                 }
             }
         },
