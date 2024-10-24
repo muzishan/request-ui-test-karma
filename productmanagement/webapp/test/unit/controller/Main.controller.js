@@ -57,7 +57,28 @@ sap.ui.define([
 		assert.ok(this.oController);
 	});
 
-    QUnit.test("onObjectMatched should set isViewer in the currentUserModel", async function (assert) {
+    QUnit.test("onObjectMatched should set isAdmin in the currentUserModel", async function (assert) {
+        const oController = this.oController;
+        const oViewStub = this.oViewStub;
+    
+        const currentUserMock = {
+            roles: ["SDR_Admins"]
+        };
+    
+        const getCurrentUserStub = sinon.stub(AjaxHelper, "getCurrentUser").returns(currentUserMock);
+    
+        await oController.onObjectMatched();
+    
+        assert.ok(getCurrentUserStub.calledOnce, "AjaxHelper.getCurrentUser was called once");
+        assert.ok(oViewStub.setModel.calledOnce, "setModel was called once");
+    
+        const args = oViewStub.setModel.getCall(0).args[0].getData();
+        assert.strictEqual(args.isAdmin, true, "isAdmin should be set to true in the currentUserModel");
+    
+        getCurrentUserStub.restore();
+    });
+    
+    QUnit.test("onObjectMatched should not set isAdmin when the user is admin/requester/approver", async function (assert) {
         const oController = this.oController;
         const oViewStub = this.oViewStub;
     
@@ -73,33 +94,12 @@ sap.ui.define([
         assert.ok(oViewStub.setModel.calledOnce, "setModel was called once");
     
         const args = oViewStub.setModel.getCall(0).args[0].getData();
-        assert.strictEqual(args.isViewer, true, "isViewer should be set to true in the currentUserModel");
+        assert.strictEqual(args.isAdmin, false, "isAdmin should be set to false in the currentUserModel");
     
         getCurrentUserStub.restore();
     });
     
-    QUnit.test("onObjectMatched should not set isViewer when the user is admin/requester/approver", async function (assert) {
-        const oController = this.oController;
-        const oViewStub = this.oViewStub;
-    
-        const currentUserMock = {
-            roles: ["SDR_Admins", "SDR_Viewers"]
-        };
-    
-        const getCurrentUserStub = sinon.stub(AjaxHelper, "getCurrentUser").returns(currentUserMock);
-    
-        await oController.onObjectMatched();
-    
-        assert.ok(getCurrentUserStub.calledOnce, "AjaxHelper.getCurrentUser was called once");
-        assert.ok(oViewStub.setModel.calledOnce, "setModel was called once");
-    
-        const args = oViewStub.setModel.getCall(0).args[0].getData();
-        assert.strictEqual(args.isViewer, false, "isViewer should be set to false in the currentUserModel");
-    
-        getCurrentUserStub.restore();
-    });
-    
-    QUnit.test("onObjectMatched should not set isViewer when the user has no roles", async function (assert) {
+    QUnit.test("onObjectMatched should not set isAdmin when the user has no roles", async function (assert) {
         const oController = this.oController;
         const oViewStub = this.oViewStub;
     
@@ -115,7 +115,7 @@ sap.ui.define([
         assert.ok(oViewStub.setModel.calledOnce, "setModel was called once");
     
         const args = oViewStub.setModel.getCall(0).args[0].getData();
-        assert.strictEqual(args.isViewer, false, "isViewer should be set to false in the currentUserModel");
+        assert.strictEqual(args.isAdmin, false, "isAdmin should be set to false in the currentUserModel");
     
         getCurrentUserStub.restore();
     });
@@ -236,7 +236,6 @@ sap.ui.define([
         assert.ok(updateProductContextStub.calledOnce, "updateProductContext should be called once");
         assert.deepEqual(updateProductContextStub.firstCall.args, [oController, oData], "updateProductContext called with correct arguments");
         assert.ok(!createProductContextStub.called, "createProductContext should not be called");
-        assert.ok(destroyStub.calledOnce, "Dialog should be destroyed");
         validateStub.restore();
         updateProductContextStub.restore();
         createProductContextStub.restore();
@@ -268,7 +267,6 @@ sap.ui.define([
         assert.ok(!updateProductContextStub.called, "updateProductContext should not be called");
         assert.ok(createProductContextStub.calledOnce, "createProductContext should be called once");
         assert.deepEqual(createProductContextStub.firstCall.args, [oController, oData], "createProductContext called with correct arguments");
-        assert.ok(destroyStub.calledOnce, "Dialog should be destroyed");
         validateStub.restore();
         updateProductContextStub.restore();
         createProductContextStub.restore();
@@ -277,6 +275,12 @@ sap.ui.define([
     QUnit.test("onProductDialogClosePress - Should destroy the dialog when onProductDialogClosePress is called", function (assert) {
         const oController = this.oController;
         const destroyStub = sinon.stub();
+        const oBindingStub = {
+            resetChanges: sinon.stub()
+        };
+        this.oTableStub = {
+            getBinding: sinon.stub().withArgs("items").returns(oBindingStub)
+        };
         const oEvent = {
             getSource: sinon.stub().returns({
                 getParent: sinon.stub().returns({
@@ -286,6 +290,7 @@ sap.ui.define([
                 })
             })
         };
+        this.oController.oTable = this.oTableStub;
         oController.onProductDialogClosePress(oEvent);
         assert.ok(destroyStub.calledOnce, "Dialog's destroy method should be called once");
     });

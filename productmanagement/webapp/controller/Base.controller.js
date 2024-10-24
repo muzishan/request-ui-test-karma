@@ -6,7 +6,7 @@ sap.ui.define(
         "sap/ui/core/Messaging",
         "sap/ui/core/ElementRegistry",
         "sap/ui/dom/isBehindOtherElement",
-        "com/kion/sdr/ui/productmanagement/utils/AjaxHelper",
+        "com/kion/sdr/ui/productmanagement/utils/AjaxHelper"
     ],
     function (Controller, MessagePopover, MessageItem, Messaging, ElementRegistry, isBehindOtherElement, AjaxHelper) {
         "use strict";
@@ -24,17 +24,17 @@ sap.ui.define(
             handleMessagePopoverPress: function (oEvent) {
                 this.initializePopOver(oEvent.getSource());
             },
-            initializePopOver: function (oBtnControl) { 
+            initializePopOver: function (oBtnControl) {
                 if (!this.oMp) {
                     this.oMP = new MessagePopover({
                         activeTitlePress: function (oEvent) {
-                            let oItem = oEvent.getParameter("item"),
+                            const oItem = oEvent.getParameter("item"),
                                 oMessage = oItem.getBindingContext("message").getObject(),
                                 oControl = ElementRegistry.get(oMessage.getControlId());
-        
+
                             if (oControl) {
                                 setTimeout(function(){
-                                    let bIsBehindOtherElement = isBehindOtherElement(oControl.getDomRef());
+                                    const bIsBehindOtherElement = isBehindOtherElement(oControl.getDomRef());
                                     if (bIsBehindOtherElement) {
                                         this.close();
                                     }
@@ -52,8 +52,8 @@ sap.ui.define(
                                 type: "{message>type}",
                                 description: "{message>description}",
                                 activeTitle: {parts: [{path: 'message>controlIds'}], formatter: this.isPositionable}
-                            }),
-                        },
+                            })
+                        }
                     });
                 }
                 oBtnControl.addDependent(this.oMP);
@@ -64,8 +64,8 @@ sap.ui.define(
                     100
                 );
             },
-            isPositionable : function (sControlId) {
-                return sControlId && sControlId.length > 0;
+            isPositionable: function (sControlId) {
+                return !!(sControlId && sControlId.length > 0);
             }
         });
     }

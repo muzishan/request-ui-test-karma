@@ -8,7 +8,7 @@ sap.ui.define([], function () {
             return isEdit ? sUpdateText : sSaveText;
         },
         formatDialogTitle: function (isEdit, sAddTitle, sUpdateTitle) {
-            return isEdit ? sUpdateTitle : sAddTitle
+            return isEdit ? sUpdateTitle : sAddTitle;
         }
     };
 });
