@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.test("should return 'InActive' when the isActive is not 'true'", function (assert) {
 		const isActive = "false";
 		const res = Formatter.formatStatus(isActive)
-		assert.strictEqual(res, "InActive");
+		assert.strictEqual(res, "Inactive");
 	});
 
 	QUnit.module("saveButtonText");

@@ -11,7 +11,7 @@ module.exports = {
                     "code": "12121",
                     "brand": "LMH",
                     "description": "223",
-                    "roles": ["openid", "SDR_Viewers", "uaa.user"]
+                    "roles": ["openid", "SDR_Admins", "uaa.user"]
                 };
             case 'baseFunction':
                 if (odataRequest.isStrictMode) {

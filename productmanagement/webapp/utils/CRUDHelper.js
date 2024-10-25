@@ -29,6 +29,7 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
             }
             Promise.all(promises).then(() => {
                 sap.m.MessageToast.show(oResourceBundle.getText("productUpdateSuccess"));
+                oController.oProductDialog.close();
             });
         },
         deleteProductContext: function (oController, oBindingContext) {

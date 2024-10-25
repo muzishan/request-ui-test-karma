@@ -104,17 +104,20 @@
                 text="{i18n>brand}"
             />
             <Select id="brandDialogSelect" required="true" selectedKey="{productCreateModel>/brand}">
-                <core:Item id="_IDGenItem2" key="LMH" text="LMH" />
-                <core:Item id="_IDGenItem3" key="STILL" text="STILL" />
+                <core:Item id="_IDGenItem2" key="LMH" text="{i18n>lmh}" />
+                <core:Item id="_IDGenItem3" key="STILL" text="{i18n>still}" />
             </Select>
             <Label
                 id="isActiveDialogLabel"
                 text="{i18n>isActive}"
             />
-            <CheckBox
-                id="isActiveDialogCheckbox"
-                selected="{path: 'productCreateModel>/active', type: 'sap.ui.model.type.Boolean'}"
-            />
+            <RadioButtonGroup id="isActiveDialogCheckbox" 
+                  selectedIndex="{= ${productCreateModel>/active} ? 0 : 1 }" 
+                  select="onRadioButtonSelect"
+                  columns="2">
+                <RadioButton id="activeRadioButton" text="{i18n>active}" />
+                <RadioButton id="inactiveRadioButton" text="{i18n>inactive}" />
+            </RadioButtonGroup>
         </l:SimpleForm>
         <footer>
             <OverflowToolbar id="productDialogFooter">

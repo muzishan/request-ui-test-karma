@@ -53,6 +53,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             }
         },
         onProductDialogSavePress: function (oEvent) {
+            this.removeAllMessages();
             const oDataModel = this.getView().getModel("productCreateModel");
             const hasError = Validator.validateCreateProduct(this, ['seriesDialogInput', 'seriesDescDialogInput', 'productCodeDialogInput', 'productDescDialogInput']);
 
@@ -73,6 +74,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         createProductCompleted: function (oEvent) {
             if (oEvent.getParameter("success")) {
                 this.oProductDialog.close();
+                this.onRefreshButtonPressed();
             } else {
                 this.oTable.getBinding('items').resetChanges();
                 this.onRefreshButtonPressed();
@@ -148,6 +150,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             const sProductDesc = this.getView().byId("productCodesDescInput").getValue().trim();
             const sBrand = this.getView().byId("brandInput").getSelectedKey();
             const sStatus = this.getView().byId("statusSelect").getSelectedKey();
+            this.filterStrForExport = [];
 
             if (sSeries) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -156,6 +159,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     value1: sSeries,
                     caseSensitive: false
                 }));
+                this.filterStrForExport.push(`contains(tolower(series),tolower('${sSeries}'))`);
             }
             if (sSeriesDesc) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -164,6 +168,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     value1: sSeriesDesc,
                     caseSensitive: false
                 }));
+                this.filterStrForExport.push(`contains(tolower(seriesDescription),tolower('${sSeriesDesc}'))`);
             }
             if (sProductCode) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -172,6 +177,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     value1: sProductCode,
                     caseSensitive: false
                 }));
+                this.filterStrForExport.push(`contains(tolower(productCode),tolower('${sProductCode}'))`);
             }
             if (sProductDesc) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -180,6 +186,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     value1: sProductDesc,
                     caseSensitive: false
                 }));
+                this.filterStrForExport.push(`contains(tolower(description),tolower('${sProductDesc}'))`);
             }
             if (sBrand) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -187,12 +194,15 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     operator: sap.ui.model.FilterOperator.EQ,
                     value1: sBrand
                 }));
+                this.filterStrForExport.push(`brand eq '${sBrand}'`);
             }
             if (sStatus) {
                 const bActive = sStatus === "true";
                 aFilters.push(new sap.ui.model.Filter("active", sap.ui.model.FilterOperator.EQ, bActive));
+                this.filterStrForExport.push(`active eq ${bActive}`);
             }
             oBinding.filter(aFilters);
+
         },
         dataReceived: function() {
             const aItems = this.oTable.getItems();
@@ -202,23 +212,30 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         onExcelExport: function () {
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
             let oDataSource = [];
-            oDataSource = this.dataReceived();
-            const oColConfig = this.createColumnConfig();
-            const oSheetConfig = {
-                workbook: {
-                    columns: oColConfig,
-                    context: {
-                        sheetName: "Products"
-                    }
-                },
-                dataSource: oDataSource,
-                fileName: "Products.xlsx"
-            };
-            const oSheet = new Spreadsheet(oSheetConfig);
-            oSheet.build().then(function () {
-                MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
-            }).finally(function () {
-                oSheet.destroy();
+            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$orderby=createdAt desc&$filter=${this.filterStrForExport.join(' and ')}`).then((products) => {
+                oDataSource = products.value.map((item) => {
+                    return {
+                        ...item,
+                        active: item.active ? oResourceBundle.getText("Active") : oResourceBundle.getText("Inactive")
+                    };
+                });
+                const oColConfig = this.createColumnConfig();
+                const oSheetConfig = {
+                    workbook: {
+                        columns: oColConfig,
+                        context: {
+                            sheetName: "Products"
+                        }
+                    },
+                    dataSource: oDataSource,
+                    fileName: "Products.xlsx"
+                };
+                const oSheet = new Spreadsheet(oSheetConfig);
+                oSheet.build().then(function () {
+                    MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
+                }).finally(function () {
+                    oSheet.destroy();
+                });
             });
         },
         createColumnConfig: function () {
@@ -251,8 +268,13 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                 label: this.getView().getModel("i18n").getResourceBundle().getText("columnIsActive"),
                 property: "active",
                 width: "10",
-                type: EdmType.Boolean
+                type: EdmType.String
             }];
+        },
+        onRadioButtonSelect: function(oEvent) {
+            const oSelectedIndex = oEvent.getParameter("selectedIndex");
+            const bIsActive = oSelectedIndex === 0;
+            this.getView().getModel("productCreateModel").setProperty("/active", bIsActive);
         },
         onReset: function () {
             this.getView().byId("seriesInput").setValue("");
@@ -264,6 +286,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             this.getView().byId("brandInput").setSelectedKey("");
             this.getView().byId("statusSelect").setSelectedKey("");
             this.onSearch();
+            this.filterStrForExport = [];
         }
     });
 });

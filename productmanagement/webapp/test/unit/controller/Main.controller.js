@@ -569,7 +569,7 @@ sap.ui.define([
             label: "Is Active",
             property: "active",
             width: "10",
-            type: EdmType.Boolean
+            type: EdmType.String
         }, "Sixth column config is correct.");
     });
     
@@ -659,10 +659,10 @@ sap.ui.define([
             getValue: sinon.stub().returns("PC1")
         };
         this.oViewStub.byId.withArgs("productCodesInput").returns(productCodeInputStub);
-        const emptyInputStubs = ["seriesDescInput", "productCodesDescInput"];
-        emptyInputStubs.forEach((id) => {
+        const descInputStubs = ["seriesDescInput", "productCodesDescInput"];
+        descInputStubs.forEach((id) => {
             const inputStub = {
-                getValue: sinon.stub().returns("")
+                getValue: sinon.stub().returns("desc")
             };
             this.oViewStub.byId.withArgs(id).returns(inputStub);
         });
@@ -670,7 +670,7 @@ sap.ui.define([
             getSelectedKey: sinon.stub().returns("")
         };
         const brandSelectStub = {
-            getSelectedKey: sinon.stub().returns("")
+            getSelectedKey: sinon.stub().returns("LMH")
         }
         this.oViewStub.byId.withArgs("statusSelect").returns(statusSelectStub);
         this.oViewStub.byId.withArgs("brandInput").returns(brandSelectStub);
@@ -684,14 +684,31 @@ sap.ui.define([
                 caseSensitive: false
             }),
             new Filter({
+                path: "seriesDescription",
+                operator: FilterOperator.Contains,
+                value1: "desc",
+                caseSensitive: false
+            }),
+            new Filter({
                 path: "productCode",
                 operator: FilterOperator.Contains,
                 value1: "PC1",
                 caseSensitive: false
+            }),
+            new Filter({
+                path: "description",
+                operator: FilterOperator.Contains,
+                value1: "desc",
+                caseSensitive: false
+            }),
+            new Filter({
+                path: "brand",
+                operator: FilterOperator.EQ,
+                value1: "LMH"
             })
         ];
         const actualFilters = this.oBindingStub.filter.firstCall.args[0];
-        assert.equal(actualFilters.length, expectedFilters.length, "Two filters should be applied");
+        assert.equal(actualFilters.length, expectedFilters.length, "Five filters should be applied");
         for (let i = 0; i < expectedFilters.length; i++) {
             assert.strictEqual(actualFilters[i].sPath, expectedFilters[i].sPath, `Filter ${i} path should match`);
             assert.strictEqual(actualFilters[i].sOperator, expectedFilters[i].sOperator, `Filter ${i} operator should match`);

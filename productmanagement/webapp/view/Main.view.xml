@@ -138,9 +138,9 @@
                                 </HBox>
                             <Select id="brandInput" change=".onSearch" width="100%" >
                             <items>
-                                <core:Item id="_IDGenItem7" key="" text="All" />
-                                <core:Item id="_IDGenItem8" key="LMH" text="LMH" />
-                                <core:Item id="_IDGenItem9" key="STILL" text="STILL" />
+                                <core:Item id="_IDGenItem7" key="" text="{i18n>all}" />
+                                <core:Item id="_IDGenItem8" key="LMH" text="{i18n>lmh}" />
+                                <core:Item id="_IDGenItem9" key="STILL" text="{i18n>still}" />
                             </items>
                             </Select>
                         </VBox>
@@ -158,9 +158,9 @@
                                 </HBox>
                             <Select id="statusSelect" change=".onSearch" width="100%">
                             <items>
-                                <core:Item id="_IDGenItem4" key="" text="All" />
-                                <core:Item id="_IDGenItem5" key="true" text="Active" />
-                                <core:Item id="_IDGenItem6" key="false" text="Inactive" />
+                                <core:Item id="_IDGenItem4" key="" text="{i18n>all}" />
+                                <core:Item id="_IDGenItem5" key="true" text="{i18n>active}" />
+                                <core:Item id="_IDGenItem6" key="false" text="{i18n>inactive}" />
                             </items>
                             </Select>
                         </VBox> 
@@ -201,7 +201,7 @@
                                 id="txtIsActive"
                                 text="{path : 'active', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatStatus'}"
                             />
-                            <Toolbar id="Toolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                            <Toolbar id="Toolbar" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
                                 <Button
                                     id="editButton"
                                     icon="sap-icon://edit-outside"
