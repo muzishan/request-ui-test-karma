@@ -1,0 +1,19 @@
+{
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "/v4/(.*)$",
+      "target": "/v4/$1",
+      "destination": "custom_backend_dest",
+      "csrfProtection": false,
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "/(.*)$",
+      "target": "/$1",
+      "destination": "custom_frontend_dest",
+      "csrfProtection": false,
+      "authenticationType": "xsuaa"
+    }
+  ]
+}

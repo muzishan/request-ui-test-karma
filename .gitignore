@@ -1,0 +1,13 @@
+/mta_archives/
+/node_modules/
+*/node_modules/
+/resources/
+*/dist/
+
+
+### VS Code ###
+.vscode/
+
+### Karma ###
+coverage/
+.env
