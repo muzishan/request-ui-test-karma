@@ -24,8 +24,8 @@
                 inset="false"
                 items="{
                     path: '/ProductCodes',
-                    sorter: { path: 'createdAt', descending: true },
-                    events: { createCompleted: '.createProductCompleted'}
+                    sorter: { path: 'productCode'},
+                    events: { createCompleted: '.createProductCompleted', patchCompleted: '.patchProductCompleted'}
                 }"
                 growingThreshold="100"
                 growing="true"

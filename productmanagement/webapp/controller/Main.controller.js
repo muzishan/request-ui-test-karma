@@ -74,11 +74,20 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         createProductCompleted: function (oEvent) {
             if (oEvent.getParameter("success")) {
                 this.oProductDialog.close();
-                this.onRefreshButtonPressed();
             } else {
                 this.oTable.getBinding('items').resetChanges();
                 this.onRefreshButtonPressed();
             }
+        },
+        patchProductCompleted: function (oEvent) {
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            if (oEvent.getParameter("success")) {
+                sap.m.MessageToast.show(oResourceBundle.getText("productUpdateSuccess"));
+                this.oProductDialog.close();
+            } else {
+                this.oTable.getBinding('items').resetChanges();
+            }
+            this.onRefreshButtonPressed();
         },
         onSelectionChange: function () {
             const oTable = this.getView().byId("tableProducts");
@@ -212,11 +221,12 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         onExcelExport: function () {
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
             let oDataSource = [];
-            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$orderby=createdAt desc&$filter=${this.filterStrForExport.join(' and ')}`).then((products) => {
+            const filterStr = this.filterStrForExport && this.filterStrForExport.length > 0 ? `&$filter=${this.filterStrForExport.join(' and ')}` : '';
+            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$orderby=productCode${filterStr}`).then((products) => {
                 oDataSource = products.value.map((item) => {
                     return {
                         ...item,
-                        active: item.active ? oResourceBundle.getText("Active") : oResourceBundle.getText("Inactive")
+                        active: item.active ? oResourceBundle.getText("active") : oResourceBundle.getText("inactive")
                     };
                 });
                 const oColConfig = this.createColumnConfig();

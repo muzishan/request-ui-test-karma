@@ -7,7 +7,6 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
             oTableBinding.refresh();
         },
         updateProductContext: function (oController, oData) {
-            const oResourceBundle = oController.getView().getModel("i18n").getResourceBundle();
             const oContext = oController.editContext;
 
             const promises = [];
@@ -27,10 +26,7 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
                     }));
                 }
             }
-            Promise.all(promises).then(() => {
-                sap.m.MessageToast.show(oResourceBundle.getText("productUpdateSuccess"));
-                oController.oProductDialog.close();
-            });
+            Promise.all(promises);
         },
         deleteProductContext: function (oController, oBindingContext) {
             const oDeleteButton = oController.getView().byId("deleteButton");
