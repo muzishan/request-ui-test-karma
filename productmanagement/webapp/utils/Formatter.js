@@ -7,8 +7,8 @@ sap.ui.define([], function () {
         saveButtonText: function (isEdit, sSaveText, sUpdateText) {
             return isEdit ? sUpdateText : sSaveText;
         },
-        formatDialogTitle: function (isEdit, sAddTitle, sUpdateTitle) {
-            return isEdit ? sUpdateTitle : sAddTitle;
+        formatDialogTitle: function (payload, sAddTitle, sUpdateTitle) {
+            return payload.isEdit ? sUpdateTitle + ' ' + payload.productCode : sAddTitle;
         }
     };
 });

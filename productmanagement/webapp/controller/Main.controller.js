@@ -207,35 +207,43 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             const oData = aItems.map((item) => item.getBindingContext().getObject());
             return oData;
         },
-        onExcelExport: function () {
+        fetchDownloadData: function (url) {
+            const that = this;
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
-            let oDataSource = [];
-            const filterStr = this.filterStrForExport && this.filterStrForExport.length > 0 ? `&$filter=${this.filterStrForExport.join(' and ')}` : '';
-            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$expand=seriesRef&$orderby=productCode${filterStr}`).then((products) => {
-                oDataSource = products.value.map((item) => {
+            AjaxHelper.fetchData(this, url).then((res) => {
+                that.oDataSource = that.oDataSource.concat(res.value.map((item) => {
                     return {
                         ...item,
                         active: item.active ? oResourceBundle.getText("active") : oResourceBundle.getText("inactive")
                     };
-                });
-                const oColConfig = this.createColumnConfig();
-                const oSheetConfig = {
-                    workbook: {
-                        columns: oColConfig,
-                        context: {
-                            sheetName: "Products"
-                        }
-                    },
-                    dataSource: oDataSource,
-                    fileName: "Products.xlsx"
-                };
-                const oSheet = new Spreadsheet(oSheetConfig);
-                oSheet.build().then(function () {
-                    MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
-                }).finally(function () {
-                    oSheet.destroy();
-                });
+                }));
+                if (res['@nextLink']) {
+                    that.fetchDownloadData(res['@nextLink']);
+                } else {
+                    const oColConfig = that.createColumnConfig();
+                    const oSheetConfig = {
+                        workbook: {
+                            columns: oColConfig,
+                            context: {
+                                sheetName: "Products"
+                            }
+                        },
+                        dataSource: that.oDataSource,
+                        fileName: "Products.xlsx"
+                    };
+                    const oSheet = new Spreadsheet(oSheetConfig);
+                    oSheet.build().then(function () {
+                        MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
+                    }).finally(function () {
+                        oSheet.destroy();
+                    });
+                }
             });
+        },
+        onExcelExport: function () {
+            this.oDataSource = [];
+            const filterStr = this.filterStrForExport && this.filterStrForExport.length > 0 ? `&$filter=${this.filterStrForExport.join(' and ')}` : '';
+            this.fetchDownloadData(`ProductCodes?$top=10000&$count=true&$expand=seriesRef&$orderby=productCode${filterStr}`);
         },
         createColumnConfig: function () {
             return [{

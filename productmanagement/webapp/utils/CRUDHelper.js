@@ -8,14 +8,9 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
         },
         updateProductContext: function (oController, oData) {
             const oContext = oController.editContext;
-
             const promises = [];
-
-            delete oData.isEdit;
-            delete oData.contextPath;
-
             for (const key in oData) {
-                if (Object.hasOwn(oData, key)) {
+                if (Object.hasOwn(oData, key) && !['isEdit', 'contextPath', 'seriesRef'].includes(key)) {
                     promises.push(new Promise((resolve, reject) => {
                         oContext.setProperty(key, oData[key]).then(
                             function () {

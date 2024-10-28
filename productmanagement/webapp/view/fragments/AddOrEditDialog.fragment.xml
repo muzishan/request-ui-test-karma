@@ -6,13 +6,13 @@
     <Dialog
         id="productDialog"
         title="{
-                        parts: [
-                            'productCreateModel>/isEdit',
-                            'i18n>productDialogAdd',
-                            'i18n>productDialogUpdate'
-                        ],
-                        formatter: '.formatter.formatDialogTitle'
-                    }"
+                    parts: [
+                        'productCreateModel>/',
+                        'i18n>productDialogAdd',
+                        'i18n>productDialogUpdate'
+                    ],
+                    formatter: '.formatter.formatDialogTitle'
+                }"
         verticalScrolling="true"
         contentWidth="800px"
     >
