@@ -46,24 +46,6 @@
                         }"
             />
             <Label
-                id="seriesDescDialogLabel"
-                text="{i18n>seriesDescription}"
-            />
-            <Input
-                id="seriesDescDialogInput"
-                placeholder="{i18n>enterSeriesDescription}"
-                required="true"
-                autocomplete="false"
-                valueStateText="{i18n>invalidSeriesDescription}"
-                value="{
-                            path: 'productCreateModel>/seriesDescription', 
-                            type: 'sap.ui.model.type.String',
-                            constraints: {
-                                minLength: 1
-                            }
-                       }"
-            />
-            <Label
                 id="productCodeDialogLabel"
                 text="{i18n>productCode}"
             />

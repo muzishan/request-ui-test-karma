@@ -25,6 +25,10 @@
                 items="{
                     path: '/ProductCodes',
                     sorter: { path: 'productCode'},
+                    parameters : {
+                        $count: true,
+                        $expand: 'seriesRef'
+                    },
                     events: { createCompleted: '.createProductCompleted', patchCompleted: '.patchProductCompleted'}
                 }"
                 growingThreshold="100"
@@ -81,20 +85,6 @@
                                     />
                                 </HBox>
                             <Input id="seriesInput" change=".onSearch" width="100%" />
-                        </VBox>
-                    </Column>
-                     <Column
-                        id="columnSeriesDescription"
-                        demandPopin="true"
-                    >
-                        <VBox id="seriesDescFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
-                                <HBox id="seriesDescFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
-                                    <Text
-                                        id="txtSeriesDescriptionColumn"
-                                        text="{i18n>seriesDescription}"
-                                    />
-                                </HBox>
-                            <Input id="seriesDescInput" change=".onSearch" width="100%" />
                         </VBox>
                     </Column>
                     <Column
@@ -177,13 +167,10 @@
                         vAlign="Middle"
                     >
                         <cells>
-                            <Text
+                            <ObjectIdentifier
                                 id="txtSeries"
-                                text="{series}"
-                            />
-                            <Text
-                                id="txtSeriesDescription"
-                                text="{seriesDescription}"
+                                title="{series}"
+                                text="{seriesRef/description}"
                             />
                             <Text
                                 id="txtProductCode"

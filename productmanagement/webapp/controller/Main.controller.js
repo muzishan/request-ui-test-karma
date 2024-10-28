@@ -35,7 +35,6 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             this.removeAllMessages();
             const product = {
                 series: '',
-                seriesDescription: '',
                 productCode: '',
                 description: '',
                 brand: 'LMH',
@@ -55,7 +54,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         onProductDialogSavePress: function (oEvent) {
             this.removeAllMessages();
             const oDataModel = this.getView().getModel("productCreateModel");
-            const hasError = Validator.validateCreateProduct(this, ['seriesDialogInput', 'seriesDescDialogInput', 'productCodeDialogInput', 'productDescDialogInput']);
+            const hasError = Validator.validateCreateProduct(this, ['seriesDialogInput', 'productCodeDialogInput', 'productDescDialogInput']);
 
             if (!hasError) {
                 const oData = oDataModel.getData();
@@ -154,7 +153,6 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             const aFilters = [];
 
             const sSeries = this.getView().byId("seriesInput").getValue().trim();
-            const sSeriesDesc = this.getView().byId("seriesDescInput").getValue().trim();
             const sProductCode = this.getView().byId("productCodesInput").getValue().trim();
             const sProductDesc = this.getView().byId("productCodesDescInput").getValue().trim();
             const sBrand = this.getView().byId("brandInput").getSelectedKey();
@@ -169,15 +167,6 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                     caseSensitive: false
                 }));
                 this.filterStrForExport.push(`contains(tolower(series),tolower('${sSeries}'))`);
-            }
-            if (sSeriesDesc) {
-                aFilters.push(new sap.ui.model.Filter({
-                    path: "seriesDescription",
-                    operator: sap.ui.model.FilterOperator.Contains,
-                    value1: sSeriesDesc,
-                    caseSensitive: false
-                }));
-                this.filterStrForExport.push(`contains(tolower(seriesDescription),tolower('${sSeriesDesc}'))`);
             }
             if (sProductCode) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -222,7 +211,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
             let oDataSource = [];
             const filterStr = this.filterStrForExport && this.filterStrForExport.length > 0 ? `&$filter=${this.filterStrForExport.join(' and ')}` : '';
-            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$orderby=productCode${filterStr}`).then((products) => {
+            AjaxHelper.fetchData(this, `ProductCodes?$top=10000&$count=true&$expand=seriesRef&$orderby=productCode${filterStr}`).then((products) => {
                 oDataSource = products.value.map((item) => {
                     return {
                         ...item,
@@ -256,7 +245,7 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
                 type: EdmType.String
             },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("columnSeriesDescription"),
-                property: "seriesDescription",
+                property: "seriesRef/description",
                 width: "20",
                 type: EdmType.String
             },{
@@ -288,7 +277,6 @@ function (Controller, AjaxHelper, Formatter, DialogHelper, JSONModel, CRUDHelper
         },
         onReset: function () {
             this.getView().byId("seriesInput").setValue("");
-            this.getView().byId("seriesDescInput").setValue("");
             this.getView().byId("productCodesInput").setValue("");
             this.getView().byId("productCodesDescInput").setValue("");
 
