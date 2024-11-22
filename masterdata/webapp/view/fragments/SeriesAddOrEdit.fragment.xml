@@ -1,0 +1,112 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="seriesDialog"
+        title="{
+                    parts: [
+                        'seriesCreateModel>/',
+                        'i18n>seriesDialogAdd',
+                        'i18n>seriesDialogUpdate'
+                    ],
+                    formatter: '.formatter.formatDialogTitle'
+                }"
+        verticalScrolling="true"
+        contentWidth="800px"
+    >
+        <l:SimpleForm
+            id="simpleFormSeries"
+            editable="true"
+            labelSpanXL="5"  
+            labelSpanL="5"   
+            labelSpanM="3"    
+            labelSpanS="5"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="brandSeriesDialogLabel"
+                text="{i18n>brand}"
+            />
+            <RadioButtonGroup id="brandSeriesDialogCheckbox" 
+                    selectedIndex="{= ${seriesCreateModel>/brand} === 'LMH' ? 0 : 1 }"
+                    select=".onRadioButtonSelect"
+                    columns="2">
+                <RadioButton id="lmhRadioButton" text="{i18n>lmh}" />
+                <RadioButton id="stillRadioButton" text="{i18n>still}" />
+            </RadioButtonGroup>
+            <Label
+                id="codeSeriesDialogLabel"
+                text="{i18n>code}"
+            />
+            <Input
+                id="codeSeriesDialogInput"
+                placeholder="{i18n>enterCode}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidCode}"
+                value="{
+                            path: 'seriesCreateModel>/code', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="descriptionSeriesDialogLabel"
+                text="{i18n>description}"
+            />
+            <Input
+                id="descriptionSeriesDialogInput"
+                placeholder="{i18n>enterDescription}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidDescription}"
+                value="{
+                            path: 'seriesCreateModel>/description', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+								minLength: 1
+                            }
+                        }"
+            />
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="seriesDialogFooter">
+                <Button
+                    id="seriesDialogMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="seriesDialogToolbarSpacer" />
+                <Button
+                    id="saveButtonSeries"
+                    text="{
+                        parts: [
+                            'seriesCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onEntityDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeSeriesDialogButton"
+                    text="{i18n>close}"
+                    press=".onDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

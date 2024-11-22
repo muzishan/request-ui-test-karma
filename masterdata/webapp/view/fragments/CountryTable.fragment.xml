@@ -1,0 +1,136 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+<Table
+    id="tableCountry"
+    visible="false"
+    inset="false"
+    items="{
+        path:'/SdrCountries',
+        sorter: {
+            path: 'code',
+            descending: false
+        },
+        parameters : {$count: true},
+        events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}
+    }"
+    growingThreshold="100"
+    growing="true"
+    mode="None"
+    selectionChange=".onSelectionChange"
+    >
+    <headerToolbar>
+    <OverflowToolbar id="otbSubHeaderCountry">
+        <ToolbarSpacer id="_IDGenToolbarSpacerCountry"/>
+        <Button 
+                id="refreshButtonCountry" 
+                tooltip="refresh" 
+                icon="sap-icon://refresh" 
+                press=".onRefreshButtonPressed"
+            />
+            <Button
+                id="addButtonCountry"
+                icon="sap-icon://add"
+                press=".onPressCreateButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button 
+                id="clearFiltersCountry" 
+                tooltip="Clear" 
+                icon="sap-icon://clear-filter" 
+                press=".onClearFilters"
+            />
+    </OverflowToolbar>
+    </headerToolbar>
+    <columns>
+        <Column
+            id="columnCodeCountry"
+            demandPopin="true"
+        >
+            <VBox id="codeCountryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="codeCountryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtCodeCountryColumn"
+                            text="{i18n>code}"
+                        />
+                    </HBox>
+                <Input id="codeCountryInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnNameCountry"
+            demandPopin="true"
+        >
+            <VBox id="nameCountryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="nameCountryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtNameCountryColumn"
+                            text="{i18n>name}"
+                        />
+                    </HBox>
+                <Input id="nameCountryInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnStatusCountry"
+            demandPopin="true"
+        >
+            <VBox id="statusCountryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="statusCountryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="statusCountryColumn"
+                            text="{i18n>status}"
+                        />
+                    </HBox>
+                <Select id="statusCountrySelect" change=".onSearch" width="100%">
+                <items>
+                    <core:Item id="_IDGenItemCountry1" key="" text="{i18n>all}" />
+                    <core:Item id="_IDGenItemCountry2" key="true" text="{i18n>active}" />
+                    <core:Item id="_IDGenItemCountry3" key="false" text="{i18n>inactive}" />
+                </items>
+                </Select>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnOperationsCountry"
+            demandPopin="true"
+        >
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem
+            id="columnListItemTableCountry"
+            vAlign="Middle"
+        >
+            <cells>
+                <Text
+                    id="txtCodeCountry"
+                    text="{code}"
+                />
+                <Text
+                    id="txtNameCountry"
+                    text="{name}"
+                />
+                <Text
+                    id="txtStatusCountry"
+                    text="{path : 'active', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatStatus'}"
+                />
+                <Toolbar id="toolbarCountry" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                    <Button
+                        id="editButtonCountry"
+                        icon="sap-icon://edit-outside"
+                        press=".onPressEditButton"
+                    />
+                    <Button
+                        id="deleteOperationsButtonCountry"
+                        icon="sap-icon://delete"
+                        press=".onPressDeleteButton"
+                    />
+                </Toolbar>
+            </cells>
+        </ColumnListItem>
+    </items>
+    </Table>
+</core:FragmentDefinition>
