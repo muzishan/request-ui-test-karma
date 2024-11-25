@@ -6,9 +6,11 @@ sap.ui.define(
         "sap/ui/core/Messaging",
         "sap/ui/core/ElementRegistry",
         "sap/ui/dom/isBehindOtherElement",
-        "com/kion/sdr/ui/masterdata/util/AjaxHelper"
+        "com/kion/sdr/ui/masterdata/util/AjaxHelper",
+        "sap/ui/core/Locale",
+        "sap/ui/core/LocaleData"
     ],
-    function (Controller, MessagePopover, MessageItem, Messaging, ElementRegistry, isBehindOtherElement, AjaxHelper) {
+    function (Controller, MessagePopover, MessageItem, Messaging, ElementRegistry, isBehindOtherElement, AjaxHelper, Locale, LocaleData) {
         "use strict";
 
         return Controller.extend("com.kion.sdr.ui.masterdata.controller.Base", {
@@ -66,6 +68,41 @@ sap.ui.define(
             },
             isPositionable: function (sControlId) {
                 return !!(sControlId && sControlId.length > 0);
+            },
+            formatCountry: function (country_code) {
+                const countries = this.getCountries();
+                const country = countries.find(({code}) => code === country_code);
+                return country ? country_code + ' - ' + country.name : country_code;
+            },
+            getCountries: function () {
+                const territories = this.getTerritories();
+                return this.extractCountriesFrom(territories);
+            },
+            getTerritories: function (localeId) {
+                const currentConfig = sap.ui.getCore().getConfiguration();
+                const locale = localeId ? new Locale(localeId) : currentConfig.getLocale();
+                const localeData = new LocaleData(locale);
+                return localeData.getTerritories(); // includes country names
+            },
+            extractCountriesFrom: function(territories) {
+                const isValidCountry = this.createCountryCheck();
+                const toObject = (code) => Object.freeze({
+                  code: code,
+                  name: territories[code]
+                });
+                const countryObjects = Object.keys(territories)
+                  .filter(isValidCountry)
+                  .map(toObject);
+                return Object.freeze(countryObjects);
+            },
+            createCountryCheck: function (obviouslyNotCountries = [
+                "EU", // "European Union"
+                "EZ", // "Eurozone"
+                "UN", // "United Nations"
+                "ZZ" // "Unknown Region"
+              ]) {
+                return (territoryCode) => territoryCode.length == 2
+                  && !obviouslyNotCountries.includes(territoryCode);
             }
         });
     }

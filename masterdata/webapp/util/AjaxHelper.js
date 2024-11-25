@@ -18,6 +18,22 @@ sap.ui.define([
         getHost: function (oController) {
             return oController.getView().getModel().sServiceUrl.split('/v4/')[0];
         },
+        fetchData: function (oController, sUrl) {
+            sUrl = this.getHost(oController) + sUrl;
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: sUrl,
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
         uploadBatteryChargerDiscounts(oController, oData) {
             const sUrl = this.getHost(oController) + "/v4/batteryChargerDiscounts-service/uploadBatteryChargerDiscounts";
             const json = JSON.stringify({batteryChargerDiscounts : oData});

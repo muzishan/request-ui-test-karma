@@ -50,7 +50,7 @@
                 id="exportButtonBatteryChargerDiscount"
                 text="{i18n>export}"
                 icon="sap-icon://excel-attachment"
-                press=".onPressExportButton"
+                press=".onPressBatteryChargerDiscountExportButton"
                 visible="{= ${currentUserModel>/isAdmin}}"
             />
             <Button 

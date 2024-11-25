@@ -27,6 +27,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.oSeriesDialog = null;
             this.oDiscountDialog = null;
             this.oCountryDialog = null;
+            this.oCustomerDialog = null;
             const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
             oRouter.getRoute("RouteMain").attachPatternMatched(this.onObjectMatched, this);
         },
@@ -45,10 +46,11 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 "seriesButton": "tableSeries",
                 "countryButton": "tableCountry",
                 "batteryAndChargerButton": "tableBatteryCharger",
-                "batteryAndChargerDiscountButton": "tableBatteryChargerDiscount"
+                "batteryAndChargerDiscountButton": "tableBatteryChargerDiscount",
+                "customerButton": "tableCustomer"
             };
 
-            const aTableIds = ["tableSeries", "tableCountry", "tableBatteryCharger", "tableBatteryChargerDiscount"];
+            const aTableIds = ["tableSeries", "tableCountry", "tableBatteryCharger", "tableBatteryChargerDiscount", "tableCustomer"];
 
             const sTableToShow = oButtonTableMap[sSelectedKey];
 
@@ -75,6 +77,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 return "batteryChargerDiscount";
             } else if (this.byId("tableCountry").getVisible()) {
                 return "country";
+            } else if (this.byId("tableCustomer").getVisible()) {
+                return "customer";
             }
             return null;
         },
@@ -88,6 +92,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: undefined, discount: 0.00, salesOrg_ID: '' };
                 case "country":
                     return { code: '', name: '', active: true };
+                case "customer":
+                    return { name1: '', name2: '', salesOrg_ID: null, customerNo: '', addressNo: '', corporateCustomerNo: '', street: '', location: '', industryCode_ID: null, lindeCustomer: true, postCode: '', frameContractNumber: '', country_code: ''};
                 default:
                     return {};
             }
@@ -118,6 +124,9 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "country":
                     DialogHelper.initCountryDialog(this);
                     break;
+                case "customer":
+                    DialogHelper.initCustomerDialog(this);
+                    break;
                 default:
             }
         },
@@ -131,6 +140,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     return ['comboBoxBatteryCharger', 'validFromBatteryChargerDiscountInput', 'discountBatteryChargerDiscountDialogInput', 'comboBoxSalesOrg'];
                 case "country":
                     return ['codeCountryDialogInput', 'nameCountryDialogInput'];
+                case "customer":
+                    return ['name1Input', 'comboBoxIndustryCustomerCreate', 'comboBoxSalesOrgCustomerCreate'];
                 default:
                     return [];
             }
@@ -188,6 +199,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 return "batteryChargerDiscount";
             } else if (sDialogId.includes("country")) {
                 return "country";
+            } else if (sDialogId.includes("customer")) {
+                return "customer";
             }
             return null;
         },
@@ -201,6 +214,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     return this.byId("tableBatteryChargerDiscount");
                 case "country":
                     return this.byId("tableCountry");
+                case "customer":
+                    return this.byId("tableCustomer");
                 default:
                     return null;
             }
@@ -215,6 +230,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     return this.oDiscountDialog;
                 case "country":
                     return this.oCountryDialog;
+                case "customer":
+                    return this.oCustomerDialog;
                 default:
                     return null;
             }
@@ -271,6 +288,10 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     sItemCode = oBindingContext.getProperty("code");
                     sEntityName = oResourceBundle.getText("country");
                     break;
+                case "customer":
+                    sItemCode = oBindingContext.getProperty("name1");
+                    sEntityName = oResourceBundle.getText("customer");
+                    break;
                 default:
                     sItemCode = "";
                     sEntityName = sEntityType;
@@ -294,6 +315,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             const oSeriesTable = this.byId("tableSeries");
             const oBatteryChargerDiscountTable = this.byId("tableBatteryChargerDiscount");
             const oCountryTable = this.byId("tableCountry");
+            const oCustomerTable = this.byId("tableCustomer");
             let oTable, aFilters;
 
             if (oBatteryChargerTable.getVisible()) {
@@ -308,6 +330,9 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             } else if (oCountryTable.getVisible()) {
                 oTable = oCountryTable;
                 aFilters = this.countryFilters();
+            } else if (oCustomerTable.getVisible()) {
+                oTable = oCustomerTable;
+                aFilters = this.customerFilters();
             } else {
                 return;
             }
@@ -394,6 +419,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             const sSeries = this.byId("seriesDiscountInput").getValue();
             const sValidFrom = this.byId("validFromInput").getValue();
             const sDiscount = this.byId("discountInput").getValue();
+            this.filterStrForExportBatteryChargerDiscount = [];
 
             if (sCategory) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -401,12 +427,16 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.EQ,
                     value1: sCategory
                 }));
+                this.filterStrForExportBatteryChargerDiscount.push(`category eq '${sCategory}'`)
             }
             if (sSalesOrgCodes.length > 0) {
+                let filterStrArr = [];
                 const filters = sSalesOrgCodes.map(function (code) {
+                    filterStrArr.push(`salesOrg/code eq '${code}'`);
                     return new sap.ui.model.Filter({ path: 'salesOrg/code', operator: sap.ui.model.FilterOperator.EQ, value1: code, and: false });
                 });
                 aFilters.push(new sap.ui.model.Filter({ filters: filters, and: false }));
+                this.filterStrForExportBatteryChargerDiscount.push(`(${filterStrArr.join(' or ')})`);
             }
             if (sCode) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -415,6 +445,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     value1: sCode,
                     caseSensitive: false
                 }));
+                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(batteryCharger/code),tolower('${sCode}'))`)
             }
             if (sSeries) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -423,6 +454,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     value1: sSeries,
                     caseSensitive: false
                 }));
+                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(series/code),tolower('${sSeries}'))`)
             }
             if (sValidFrom) {
                 const validFromDate = new Date(sValidFrom);
@@ -432,6 +464,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.LE,
                     value1: formattedDate
                 }));
+                this.filterStrForExportBatteryChargerDiscount.push(`validFrom le '${formattedDate}'`)
             }
             if (sDiscount) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -439,6 +472,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.GE,
                     value1: parseFloat(sDiscount)
                 }));
+                this.filterStrForExportBatteryChargerDiscount.push(`discount ge ${parseFloat(sDiscount)}`)
             }
             return aFilters;
         },
@@ -475,6 +509,153 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
             return aFilters;
         },
+        customerFilters: function (oEvent) {
+            const aFilters = [];
+            const sCustomerNo = this.byId("customerNoCustomerFilterInput").getValue();
+            const sName = this.byId("nameCustomerFilterInput").getValue();
+            const sCorporateCustomerNo = this.byId("corporateCustomerNoFilterInput").getValue();
+            const sAddressNo = this.byId("addressNoFilterInput").getValue();
+            const sStreet = this.byId("streetFilterInput").getValue();
+            const sLocation = this.byId("locationFilterInput").getValue();
+            const sPostCode = this.byId("postCodeFilterInput").getValue();
+            const sFrameContractNumber = this.byId("frameContractNumberFilterInput").getValue();
+            const sLindeCustomer = this.byId("lindeCustomerFilterSelect").getSelectedKey();
+            const sSalesOrgs = this.byId('salesOrgCustomerSelect').getSelectedKeys();
+            const sIndustryCodes = this.byId('industryCustomerSelect').getSelectedKeys();
+            const sCountrys = this.byId('countryCustomerSelect').getSelectedKeys();
+            this.filterStrForExportCustomer = [];
+
+            if (sCustomerNo) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "customerNo",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sCustomerNo,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(customerNo),tolower('${sCustomerNo}'))`);
+            }
+
+            if (sName) {
+                aFilters.push(new sap.ui.model.Filter({ filters: [
+                    new sap.ui.model.Filter({
+                        path: "name1",
+                        operator: sap.ui.model.FilterOperator.Contains,
+                        value1: sName,
+                        caseSensitive: false
+                    }),
+                    new sap.ui.model.Filter({
+                        path: "name2",
+                        operator: sap.ui.model.FilterOperator.Contains,
+                        value1: sName,
+                        caseSensitive: false
+                    })
+                ], and: false }));
+                this.filterStrForExportCustomer.push(`(contains(tolower(name1),tolower('${sName}'))%20or%20contains(tolower(name2),tolower('${sName}')))`);
+            }
+
+            if (sCorporateCustomerNo) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "corporateCustomerNo",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sCorporateCustomerNo,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(corporateCustomerNo),tolower('${sCorporateCustomerNo}'))`);
+            }
+
+            if (sAddressNo) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "addressNo",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sAddressNo,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(addressNo),tolower('${sAddressNo}'))`);
+            }
+
+            if (sStreet) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "street",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sStreet,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(street),tolower('${sStreet}'))`);
+            }
+
+            if (sLocation) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "location",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sLocation,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(location),tolower('${sLocation}'))`);
+            }
+
+            if (sPostCode) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "postCode",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sPostCode,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(postCode),tolower('${sPostCode}'))`);
+            }
+
+            if (sFrameContractNumber) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "frameContractNumber",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sFrameContractNumber,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(frameContractNumber),tolower('${sFrameContractNumber}'))`);
+            }
+
+            if (sLindeCustomer != '') {
+                const isLindeCustomer = sLindeCustomer === "true";
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "lindeCustomer",
+                    operator: sap.ui.model.FilterOperator.EQ,
+                    value1: isLindeCustomer,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`lindeCustomer eq ${isLindeCustomer}`);
+            }
+
+            if (sSalesOrgs.length > 0) {
+                let filterStrArr = [];
+                const filters = sSalesOrgs.map(function (ID) {
+                    filterStrArr.push(`salesOrg_ID eq ${ID}`);
+                    return new sap.ui.model.Filter({ path: 'salesOrg_ID', operator: sap.ui.model.FilterOperator.EQ, value1: ID, and: false });
+                });
+                aFilters.push(new sap.ui.model.Filter({ filters: filters, and: false }));
+                this.filterStrForExportCustomer.push(`(${filterStrArr.join(' or ')})`);
+            }
+
+            if (sIndustryCodes.length > 0) {
+                let filterStrArr = [];
+                const filters = sIndustryCodes.map(function (ID) {
+                    filterStrArr.push(`industryCode_ID eq ${ID}`);
+                    return new sap.ui.model.Filter({ path: 'industryCode_ID', operator: sap.ui.model.FilterOperator.EQ, value1: ID, and: false });
+                });
+                aFilters.push(new sap.ui.model.Filter({ filters: filters, and: false }));
+                this.filterStrForExportCustomer.push(`(${filterStrArr.join(' or ')})`);
+            }
+
+            if (sCountrys.length > 0) {
+                let filterStrArr = [];
+                const filters = sCountrys.map(function (code) {
+                    filterStrArr.push(`country_code eq ${code}`);
+                    return new sap.ui.model.Filter({ path: 'country_code', operator: sap.ui.model.FilterOperator.EQ, value1: code, and: false });
+                });
+                aFilters.push(new sap.ui.model.Filter({ filters: filters, and: false }));
+                this.filterStrForExportCustomer.push(`(${filterStrArr.join(' or ')})`);
+            }
+
+            return aFilters;
+        },
         onClearFilters: function () {
             //BatteryChargerManagement
             this.getView().byId("categorySelect").setSelectedKey("");
@@ -485,7 +666,6 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId("brandSeriesSelect").setSelectedKey("");
             this.getView().byId("codeSeriesInput").setValue("");
             this.getView().byId("descriptionSeriesInput").setValue("");
-            this.onSearch();
             //BatteryChargerDiscount
             this.getView().byId("categoryDiscountSelect").setSelectedKey("");
             this.getView().byId("salesOrgDiscountSelect").removeAllSelectedItems();
@@ -493,10 +673,26 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId("seriesDiscountInput").setValue("");
             this.getView().byId("validFromInput").setValue("");
             this.getView().byId("discountInput").setValue("");
+            this.filterStrForExportBatteryChargerDiscount = [];
             //Country
             this.getView().byId("statusCountrySelect").setSelectedKey("");
             this.getView().byId("codeCountryInput").setValue("");
             this.getView().byId("nameCountryInput").setValue("");
+            // Customer
+            this.getView().byId("customerNoCustomerFilterInput").setValue("");
+            this.getView().byId("nameCustomerFilterInput").setValue("");
+            this.getView().byId("corporateCustomerNoFilterInput").setValue("");
+            this.getView().byId("addressNoFilterInput").setValue("");
+            this.getView().byId("streetFilterInput").setValue("");
+            this.getView().byId("locationFilterInput").setValue("");
+            this.getView().byId("postCodeFilterInput").setValue("");
+            this.getView().byId("frameContractNumberFilterInput").setValue("");
+            this.getView().byId("lindeCustomerFilterSelect").setSelectedKey("");
+            this.getView().byId("salesOrgCustomerSelect").removeAllSelectedItems("");
+            this.getView().byId("industryCustomerSelect").removeAllSelectedItems("");
+            this.getView().byId("countryCustomerSelect").removeAllSelectedItems("");
+            this.filterStrForExportCustomer = [];
+
             this.onSearch();
         },
         onRadioButtonSelect: function (oEvent) {
@@ -546,6 +742,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             const oSeriesTable = this.byId("tableSeries");
             const oBatteryChargerDiscountTable = this.byId("tableBatteryChargerDiscount");
             const oCountryTable = this.byId("tableCountry");
+            const oCustomerTable = this.byId("tableCustomer");
 
             if (oBatteryChargerTable.getVisible()) {
                 const oBinding = oBatteryChargerTable.getBinding("items");
@@ -564,6 +761,11 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 }
             } else if (oCountryTable.getVisible()) {
                 const oBinding = oCountryTable.getBinding("items");
+                if (oBinding) {
+                    oBinding.refresh();
+                }
+            } else if (oCustomerTable.getVisible()) {
+                const oBinding = oCustomerTable.getBinding("items");
                 if (oBinding) {
                     oBinding.refresh();
                 }
@@ -642,34 +844,40 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId('resultPanel').setVisible(false);
             this.oUploaderDialog.close();
         },
-        dataReceived: function() {
-            const aItems = this.byId('tableBatteryChargerDiscount').getItems();
-            const oData = aItems.map((item) => item.oBindingContexts.batteryChargerDiscountModel.getObject());
-            return oData;
-        },
-        onPressExportButton: function () {
+        fetchDownloadBatteryChargerDiscountData: function (url) {
+            const that = this;
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
-            let oDataSource = [];
-            oDataSource = this.dataReceived();
-            const oColConfig = this.createColumnConfig();
-            const oSheetConfig = {
-                workbook: {
-                    columns: oColConfig,
-                    context: {
-                        sheetName: "BatteryChargerDiscount"
-                    }
-                },
-                dataSource: oDataSource,
-                fileName: "Battery Charger Discount.xlsx"
-            };
-            const oSheet = new Spreadsheet(oSheetConfig);
-            oSheet.build().then(function () {
-                MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
-            }).finally(function () {
-                oSheet.destroy();
+            AjaxHelper.fetchData(this, "/v4/batteryChargerDiscounts-service/" + url).then((res) => {
+                that.oBatteryChargerDiscountDownloadDataSource = that.oBatteryChargerDiscountDownloadDataSource.concat(res.value);
+                if (res['@nextLink']) {
+                    that.fetchDownloadBatteryChargerDiscountData(res['@nextLink']);
+                } else {
+                    const oColConfig = that.createBatteryChargerDiscountColumnConfig();
+                    const oSheetConfig = {
+                        workbook: {
+                            columns: oColConfig,
+                            context: {
+                                sheetName: "BatteryChargerDiscount"
+                            }
+                        },
+                        dataSource: that.oBatteryChargerDiscountDownloadDataSource,
+                        fileName: "Battery Charger Discount.xlsx"
+                    };
+                    const oSheet = new Spreadsheet(oSheetConfig);
+                    oSheet.build().then(function () {
+                        MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
+                    }).finally(function () {
+                        oSheet.destroy();
+                    });
+                }
             });
         },
-        createColumnConfig: function () {
+        onPressBatteryChargerDiscountExportButton: function () {
+            this.oBatteryChargerDiscountDownloadDataSource = [];
+            const filterStr = this.filterStrForExportBatteryChargerDiscount && this.filterStrForExportBatteryChargerDiscount.length > 0 ? `&$filter=${this.filterStrForExportBatteryChargerDiscount.join(' and ')}` : '';
+            this.fetchDownloadBatteryChargerDiscountData(`BatteryChargerDiscounts?$top=1000&$count=true&$expand=batteryCharger,series,salesOrg&$orderby=batteryCharger/code${filterStr}`);
+        },
+        createBatteryChargerDiscountColumnConfig: function () {
             return [{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("category"),
                 property: "category",
@@ -702,13 +910,126 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("discount"),
                 property: "discount",
-                width: "10",
-                type: EdmType.Number
+                width: "20",
+                type: EdmType.Number,
+                scale: 2,
+                delimiter: true,
             }, {
                 label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrgColumn"),
                 property: "salesOrg/code",
                 type: EdmType.String,
+                width: "20"
+            }];
+        },
+        fetchDownloadCustomerData: function (url) {
+            const that = this;
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            AjaxHelper.fetchData(this, "/v4/master-data-service/" + url).then((res) => {
+                that.oCustomerDownloadDataSource = that.oCustomerDownloadDataSource.concat(res.value.map((item) => {
+                    return {
+                        ...item,
+                        lindeCustomer: item.lindeCustomer ? oResourceBundle.getText("yes") : oResourceBundle.getText("no")
+                    };
+                }));
+                if (res['@nextLink']) {
+                    that.fetchDownloadCustomerData(res['@nextLink']);
+                } else {
+                    const oColConfig = that.createCustomerColumnConfig();
+                    const oSheetConfig = {
+                        workbook: {
+                            columns: oColConfig,
+                            context: {
+                                sheetName: "Customers"
+                            }
+                        },
+                        dataSource: that.oCustomerDownloadDataSource,
+                        fileName: "Customers.xlsx"
+                    };
+                    const oSheet = new Spreadsheet(oSheetConfig);
+                    oSheet.build().then(function () {
+                        MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
+                    }).finally(function () {
+                        oSheet.destroy();
+                    });
+                }
+            });
+        },
+        onPressCustomerExportButton: function () {
+            this.oCustomerDownloadDataSource = [];
+            const filterStr = this.filterStrForExportCustomer && this.filterStrForExportCustomer.length > 0 ? `&$filter=${this.filterStrForExportCustomer.join(' and ')}` : '';
+            this.fetchDownloadCustomerData(`Customers?$top=1000&$count=true&$expand=salesOrg,industryCode,country&$orderby=customerNo,name1${filterStr}`);
+        },
+        createCustomerColumnConfig: function () {
+            return [{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("customerNo"),
+                property: "customerNo",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("name1"),
+                property: "name1",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("name2"),
+                property: "name2",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("corporateCustomerNo"),
+                property: "corporateCustomerNo",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("addressNo"),
+                property: "addressNo",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("street"),
+                property: "street",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("location"),
+                property: "location",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("lindeCustomer"),
+                property: "lindeCustomer",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("postCode"),
+                property: "postCode",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("frameContractNumber"),
+                property: "frameContractNumber",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrg"),
+                property: "salesOrg/code",
+                type: EdmType.String,
                 width: "10"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("industry"),
+                property: "industryCode/code",
+                type: EdmType.String,
+                width: "20"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("country"),
+                property: "country_code",
+                type: EdmType.String,
+                width: "20"
             }];
         }
     });

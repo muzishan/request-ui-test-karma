@@ -2,3 +2,7 @@
 .customToolbar {
     border-bottom: none !important;
 }
+
+.columnFlexBox .sapMFlexItem {
+    width: 100% !important;
+}

@@ -63,6 +63,21 @@ sap.ui.define([
                     oController.oCountryDialog.open();
                 }
             },
+            initCustomerDialog: function (oController) {
+                if (oController.oCustomerDialog == null || oController.oCustomerDialog.bIsDestroyed) {
+                    Fragment.load({
+                        id: oController.getView().getId(),
+                        name: 'com.kion.sdr.ui.masterdata.view.fragments.CustomerAddOrEdit',
+                        controller: oController
+                    }).then(function (oDialog) {
+                        oController.oCustomerDialog = oDialog;
+                        oController.getView().addDependent(oController.oCustomerDialog);
+                        oController.oCustomerDialog.open();
+                    });
+                } else {
+                    oController.oCustomerDialog.open();
+                }
+            },
             initUploaderDialog: function (oController) {
                 if (oController.oUploaderDialog == null) {
                     oController.oUploaderDialog = sap.ui.xmlfragment(oController.getView().getId(), 'com.kion.sdr.ui.masterdata.view.fragments.Uploader', oController);
