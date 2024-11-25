@@ -1,0 +1,35 @@
+[
+    {
+        "ID":"00000000000000-AAAS8HAAwAAB0BlAAS",
+        "createdAt":"2024-01-15T14:00:00.001Z",
+        "createdBy":"insert_sql",
+        "modifiedAt":"2024-01-15T14:00:00.001Z",
+        "modifiedBy":"insert_sql",
+        "category":"Battery",
+        "code":"Branded Battery",
+        "description":"Li-Po",
+        "active":true
+    },
+    {
+        "ID":"00000000000000-AAAS8HAAwAAB0BlAAT",
+        "createdAt":"2024-01-15T14:00:00.001Z",
+        "createdBy":"insert_sql",
+        "modifiedAt":"2024-01-15T14:00:00.001Z",
+        "modifiedBy":"insert_sql",
+        "category":"Charger",
+        "code":"Branded Charger",
+        "description":"Charger",
+        "active":true
+    },
+    {
+        "ID":"00000000000000-AAAS8HAAwAAB0BlAAU",
+        "createdAt":"2024-01-15T14:00:00.001Z",
+        "createdBy":"insert_sql",
+        "modifiedAt":"2024-01-15T14:00:00.001Z",
+        "modifiedBy":"insert_sql",
+        "category":"Battery",
+        "code":"Branded Battery",
+        "description":"Li-Po",
+        "active":false
+    }
+]

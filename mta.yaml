@@ -1,6 +1,6 @@
 _schema-version: "3.2"
 ID: special-discount-request-ui
-version: 1.0.0
+version: 1.1.0
 modules:
 - name: special-discount-request-ui-destination-content
   type: com.sap.application.content
@@ -46,9 +46,23 @@ modules:
       - comkionsdruiproductmanagement.zip
       name: comkionsdruiproductmanagement
       target-path: resources/
+    - artifacts:
+      - comkionsdruimasterdata.zip
+      name: comkionsdruimasterdata
+      target-path: resources/
 - name: comkionsdruiproductmanagement
   type: html5
   path: productmanagement
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comkionsdruimasterdata
+  type: html5
+  path: masterdata
   build-parameters:
     build-result: dist
     builder: custom

@@ -1,0 +1,160 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+<Table
+    id="tableBatteryCharger"
+    visible="false"
+    inset="false"
+    items="{
+        path:'/BatteryChargers',
+        sorter: {
+            path: 'category,code',
+            descending: false
+        },
+        parameters : {$count: true},
+        events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}
+    }"
+    growingThreshold="100"
+    growing="true"
+    mode="None"
+    selectionChange=".onSelectionChange"
+    >
+    <headerToolbar>
+    <OverflowToolbar id="otbSubHeaderBatteryCharger">
+        <ToolbarSpacer id="_IDGenToolbarSpacerBatteryCharger"/>
+        <Button 
+                id="refreshButtonBatteryCharger" 
+                tooltip="refresh" 
+                icon="sap-icon://refresh" 
+                press=".onRefreshButtonPressed"
+            />
+            <Button
+                id="addButtonBatteryCharger"
+                icon="sap-icon://add"
+                press=".onPressCreateButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button 
+                id="clearFiltersBatteryCharger" 
+                tooltip="Clear" 
+                icon="sap-icon://clear-filter" 
+                press=".onClearFilters"
+            />
+    </OverflowToolbar>
+    </headerToolbar>
+    <columns>
+        <Column
+            id="columnCategory"
+            demandPopin="true"
+        >
+            <VBox id="categoryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="categoryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtCategoryColumn"
+                            text="{i18n>category}"
+                        />
+                    </HBox>
+                <Select id="categorySelect" change=".onSearch" width="100%">
+                <items>
+                    <core:Item id="_IDGenItem1" key="" text="{i18n>all}" />
+                    <core:Item id="_IDGenItem2" key="BATTERY" text="BATTERY" />
+                    <core:Item id="_IDGenItem3" key="CHARGER" text="CHARGER" />
+                </items>
+                </Select>
+            </VBox>
+        </Column>
+        <Column
+            id="columnCode"
+            demandPopin="true"
+        >
+            <VBox id="codeFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="codeFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtCodeColumn"
+                            text="{i18n>code}"
+                        />
+                    </HBox>
+                <Input id="codeInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnDescription"
+            demandPopin="true"
+        >
+            <VBox id="descriptionFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="descriptionFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtDescriptionColumn"
+                            text="{i18n>description}"
+                        />
+                    </HBox>
+                <Input id="descriptionInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnStatus"
+            demandPopin="true"
+        >
+            <VBox id="statusFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="statusFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="statusColumn"
+                            text="{i18n>status}"
+                        />
+                    </HBox>
+                <Select id="statusSelect" change=".onSearch" width="100%">
+                <items>
+                    <core:Item id="_IDGenItem4" key="" text="{i18n>all}" />
+                    <core:Item id="_IDGenItem5" key="true" text="{i18n>active}" />
+                    <core:Item id="_IDGenItem6" key="false" text="{i18n>inactive}" />
+                </items>
+                </Select>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnOperationsBatteryCharger"
+            demandPopin="true"
+        >
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem
+            id="columnListItemTableBatteryCharger"
+            vAlign="Middle"
+        >
+            <cells>
+                <Text
+                    id="txtCategory"
+                    text="{category}"
+                />
+                <Text
+                    id="txtCode"
+                    text="{code}"
+                />
+                <Text
+                    id="txtDescription"
+                    text="{description}"
+                />
+                <Text
+                    id="txtStatus"
+                    text="{path : 'active', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatStatus'}"
+                />
+                <Toolbar id="toolbarBatteryCharger" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                    <Button
+                        id="editButtonBatteryCharger"
+                        icon="sap-icon://edit-outside"
+                        press=".onPressEditButton"
+                    />
+                    <Button
+                        id="deleteOperationsButtonBatteryCharger"
+                        icon="sap-icon://delete"
+                        press=".onPressDeleteButton"
+                    />
+                </Toolbar>
+            </cells>
+        </ColumnListItem>
+    </items>
+    </Table>
+</core:FragmentDefinition>

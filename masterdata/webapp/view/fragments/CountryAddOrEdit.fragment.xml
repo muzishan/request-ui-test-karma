@@ -1,0 +1,115 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="countryDialog"
+        title="{
+                    parts: [
+                        'countryCreateModel>/',
+                        'i18n>countryDialogAdd',
+                        'i18n>countryDialogUpdate'
+                    ],
+                    formatter: '.formatter.formatDialogTitle'
+                }"
+        verticalScrolling="true"
+        contentWidth="800px"
+    >
+        <l:SimpleForm
+            id="simpleFormCountry"
+            editable="true"
+            labelSpanXL="5"  
+            labelSpanL="5"   
+            labelSpanM="3"    
+            labelSpanS="5"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="codeCountryDialogLabel"
+                text="{i18n>code}"
+            />
+            <Input
+                id="codeCountryDialogInput"
+                placeholder="{i18n>enterCode}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidCode}"
+                change=".liveCheckFormValidation"
+                value="{
+                            path: 'countryCreateModel>/code', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 1,
+                                maxLength: 2
+                            }
+                        }"
+            />
+            <Label
+                id="nameCountryDialogLabel"
+                text="{i18n>name}"
+            />
+            <Input
+                id="nameCountryDialogInput"
+                placeholder="{i18n>enterName}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidName}"
+                change=".liveCheckFormValidation"
+                value="{
+                            path: 'countryCreateModel>/name', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+								minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="isActiveCountryDialogLabel"
+                text="{i18n>status}"
+            />
+            <RadioButtonGroup id="isActiveCountryDialogCheckbox" 
+                  selectedIndex="{= ${countryCreateModel>/active} ? 0 : 1 }" 
+                  select="onRadioButtonSelect"
+                  columns="2">
+                <RadioButton id="activeCountryRadioButton" text="{i18n>active}" />
+                <RadioButton id="inactiveCountryRadioButton" text="{i18n>inactive}" />
+            </RadioButtonGroup>
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="countryDialogFooter">
+                <Button
+                    id="countryDialogMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="countryDialogToolbarSpacer" />
+                <Button
+                    id="saveButtonCountry"
+                    text="{
+                        parts: [
+                            'countryCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onEntityDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeCountryDialogButton"
+                    text="{i18n>close}"
+                    press=".onDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

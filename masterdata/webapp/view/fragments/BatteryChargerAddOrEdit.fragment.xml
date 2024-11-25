@@ -1,0 +1,125 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="batteryChargerDialog"
+        title="{
+                    parts: [
+                        'batteryChargerCreateModel>/',
+                        'i18n>batteryChargerDialogAdd',
+                        'i18n>batteryChargerDialogUpdate'
+                    ],
+                    formatter: '.formatter.formatDialogTitle'
+                }"
+        verticalScrolling="true"
+        contentWidth="800px"
+    >
+        <l:SimpleForm
+            id="simpleFormBatteryCharger"
+            editable="true"
+            labelSpanXL="5"  
+            labelSpanL="5"   
+            labelSpanM="3"    
+            labelSpanS="5"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="categoryBatteryChargerDialogLabel"
+                text="{i18n>category}"
+            />
+            <RadioButtonGroup id="categoryBatteryChargerDialogCheckbox" 
+                  selectedIndex="{= ${batteryChargerCreateModel>/category} === 'BATTERY' ? 0 : 1}" 
+                  select="onRadioButtonSelect"
+                  columns="2">
+                <RadioButton id="batteryRadioButton" text="BATTERY" />
+                <RadioButton id="chargerRadioButton" text="CHARGER" />
+            </RadioButtonGroup>
+            <Label
+                id="codeBatteryChargerDialogLabel"
+                text="{i18n>code}"
+            />
+            <Input
+                id="codeBatteryChargerDialogInput"
+                placeholder="{i18n>enterCode}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidCode}"
+                change=".liveCheckFormValidation"
+                value="{
+                            path: 'batteryChargerCreateModel>/code', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="descriptionBatteryChargerDialogLabel"
+                text="{i18n>description}"
+            />
+            <Input
+                id="descriptionBatteryChargerDialogInput"
+                placeholder="{i18n>enterDescription}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidDescription}"
+                change=".liveCheckFormValidation"
+                value="{
+                            path: 'batteryChargerCreateModel>/description', 
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+								minLength: 1
+                            }
+                        }"
+            />
+            <Label
+                id="isActiveBatteryChargerDialogLabel"
+                text="{i18n>status}"
+            />
+            <RadioButtonGroup id="isActiveBatteryChargerDialogCheckbox" 
+                  selectedIndex="{= ${batteryChargerCreateModel>/active} ? 0 : 1 }" 
+                  select="onRadioButtonSelect"
+                  columns="2">
+                <RadioButton id="activeBatteryChargerRadioButton" text="{i18n>active}" />
+                <RadioButton id="inactiveBatteryChargerRadioButton" text="{i18n>inactive}" />
+            </RadioButtonGroup>
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="batteryChargerDialogFooter">
+                <Button
+                    id="batteryChargerDialogMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="batteryChargerDialogToolbarSpacer" />
+                <Button
+                    id="saveButtonBatteryCharger"
+                    text="{
+                        parts: [
+                            'batteryChargerCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onEntityDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeBatteryChargerDialogButton"
+                    text="{i18n>close}"
+                    press=".onDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

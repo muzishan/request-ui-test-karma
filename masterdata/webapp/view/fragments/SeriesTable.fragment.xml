@@ -1,0 +1,136 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Table
+        id="tableSeries"
+        visible="true"
+        inset="false"
+        items="{
+            path:'/Series',
+            sorter: {
+                path: 'code',
+                descending: false
+            },
+            parameters : {$count: true},
+            events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}
+        }"
+        growingThreshold="100"
+        growing="true"
+        mode="None"
+        selectionChange=".onSelectionChange"
+    >
+        <headerToolbar>
+        <OverflowToolbar id="otbSubHeaderSeries">
+            <ToolbarSpacer id="_IDGenToolbarSpacerSeries"/>
+            <Button 
+                    id="refreshButtonSeries" 
+                    tooltip="refresh" 
+                    icon="sap-icon://refresh" 
+                    press=".onRefreshButtonPressed"
+                />
+                <Button
+                    id="addButtonSeries"
+                    icon="sap-icon://add"
+                    press=".onPressCreateButton"
+                    visible="{= ${currentUserModel>/isAdmin}}"
+                />
+                <Button 
+                    id="clearFiltersSeries" 
+                    tooltip="Clear" 
+                    icon="sap-icon://clear-filter" 
+                    press=".onClearFilters"
+                />
+        </OverflowToolbar>
+    </headerToolbar>
+        <columns>
+            <Column
+                id="columnBrandSeries"
+                demandPopin="true"
+            >
+                <VBox id="brandSeriesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                        <HBox id="brandSeriesFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                            <Text
+                                id="txtBrandSeriesColumn"
+                                text="{i18n>brand}"
+                            />
+                        </HBox>
+                    <Select id="brandSeriesSelect" change=".onSearch" width="100%">
+                    <items>
+                        <core:Item id="_IDGenItemSeries1" key="" text="{i18n>all}" />
+                        <core:Item id="_IDGenItemSeries2" key="LMH" text="{i18n>lmh}" />
+                        <core:Item id="_IDGenItemSeries3" key="STILL" text="{i18n>still}" />
+                    </items>
+                    </Select>
+                </VBox>
+            </Column>
+            <Column
+                id="columnCodeSeries"
+                demandPopin="true"
+            >
+                <VBox id="codeSeriesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                        <HBox id="codeSerisFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                            <Text
+                                id="txtCodeSeriesColumn"
+                                text="{i18n>code}"
+                            />
+                        </HBox>
+                    <Input id="codeSeriesInput" change=".onSearch" width="100%" />
+                </VBox>
+            </Column>
+            <Column
+                id="columnDescriptionSeries"
+                demandPopin="true"
+            >
+                <VBox id="descriptionSeriesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                        <HBox id="descriptionSeriesFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                            <Text
+                                id="txtDescriptionSeriesColumn"
+                                text="{i18n>description}"
+                            />
+                        </HBox>
+                    <Input id="descriptionSeriesInput" change=".onSearch" width="100%" />
+                </VBox>
+            </Column>
+            <Column
+                id="columnOperationsSeries"
+                demandPopin="true"
+            >
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem
+                id="columnListItemTableSeries"
+                vAlign="Middle"
+            >
+                <cells>
+                    <Text
+                        id="txtBrandSeries"
+                        text="{brand}"
+                    />
+                    <Text
+                        id="txtCodeSeries"
+                        text="{code}"
+                    />
+                    <Text
+                        id="txtDescriptionSeries"
+                        text="{description}"
+                    />
+                    <Toolbar id="toolbarSeries" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                        <Button
+                            id="editButtonSeries"
+                            icon="sap-icon://edit-outside"
+                            press=".onPressEditButton"
+                        />
+                        <Button
+                            id="deleteOperationsButtonSeries"
+                            icon="sap-icon://delete"
+                            press=".onPressDeleteButton"
+                        />
+                    </Toolbar>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>
