@@ -20,6 +20,9 @@ sap.ui.define([], function () {
                 if (oInput.startsWith('comboBox')) {
                     const oBinding = oInputControl.getBinding("selectedKey");
                     oBinding.getType().validateValue(oInputControl.getSelectedKey());
+                } else if (oInput.startsWith('datePicker')) {
+                    const oBinding = oInputControl.getBinding("value");
+                    oBinding.getType().validateValue(oInputControl.getDateValue());
                 } else {
                     const oBinding = oInputControl.getBinding("value");
                     oBinding.getType().validateValue(oInputControl.getValue());

@@ -37,11 +37,13 @@
                 required="true"
                 autocomplete="false"
                 valueStateText="{i18n>invalidCode}"
+                change=".liveCheckFormValidation"
                 value="{
                             path: 'countryCreateModel>/code', 
                             type: 'sap.ui.model.type.String',
                             constraints: {
-                                minLength: 1
+                                minLength: 1,
+                                maxLength: 2
                             }
                         }"
             />
@@ -55,6 +57,7 @@
                 required="true"
                 autocomplete="false"
                 valueStateText="{i18n>invalidName}"
+                change=".liveCheckFormValidation"
                 value="{
                             path: 'countryCreateModel>/name', 
                             type: 'sap.ui.model.type.String',

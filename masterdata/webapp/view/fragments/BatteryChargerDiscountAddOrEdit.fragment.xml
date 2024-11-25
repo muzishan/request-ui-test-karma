@@ -56,6 +56,7 @@
                     }
                 }"
                 showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
                 selectedKey="{
                     path: 'batteryChargerDiscountCreateModel>/batteryCharger_ID',
                     type: 'sap.ui.model.type.String',
@@ -94,16 +95,17 @@
                 text="{i18n>validFrom}"
             />
             <DatePicker 
-                id="validFromBatteryChargerDiscountInput"
+                id="datePickerValidFromBatteryChargerDiscount"
                 valueFormat="yyyy-MM-dd"
+                change=".liveCheckFormValidation"
                 value="{
                     path : 'batteryChargerDiscountCreateModel>/validFrom',
-                    type : 'sap.ui.model.type.String',
+                    type : 'sap.ui.model.type.Date',
                     constraints: {
                         minimum: 1
                     }
                 }"
-            required="true"/>
+                required="true"/>
             <Label
                 id="discountBatteryChargerDiscountDialogLabel"
                 text="{i18n>discount}"
@@ -115,6 +117,7 @@
                 autocomplete="false"
                 valueStateText="{i18n>invalidDiscount}"
                 type="Number"
+                change=".liveCheckFormValidation"
                 value="{
                     path: 'batteryChargerDiscountCreateModel>/discount',
                     type: 'sap.ui.model.type.String',
@@ -136,6 +139,7 @@
                     sorter: { path: 'code' }
                 }"
                 showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
                 selectedKey="{
                     path: 'batteryChargerDiscountCreateModel>/salesOrg_ID',
                     type: 'sap.ui.model.type.String',

@@ -14,7 +14,7 @@
             $select: 'category,validFrom,discount,batteryCharger_ID,series_ID,salesOrg_ID'
         },
         sorter: {
-            path: 'batteryCharger/code',
+            path: 'category,batteryCharger/code,series/code,validFrom desc,salesOrg/code',
             descending: false
         },
         events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}

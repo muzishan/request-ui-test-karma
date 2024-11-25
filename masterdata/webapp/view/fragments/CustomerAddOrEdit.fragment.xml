@@ -45,6 +45,7 @@
             <FlexBox direction="Column" alignItems="Start" class="columnFlexBox">
                 <Input
                     id="name1Input"
+                    change='.liveCheckFormValidation'
                     value="{
                             path: 'customerCreateModel>/name1', 
                             type: 'sap.ui.model.type.String',
@@ -126,6 +127,7 @@
                             minLength: 1
                         }
                 }"
+                selectionChange='.liveCheckFormValidation'
                 items="{
                     path : '/IndustryCodes',
                     sorter : {
@@ -167,6 +169,7 @@
                     sorter: { path: 'code' }
                 }"
                 showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
                 selectedKey="{
                         path: 'customerCreateModel>/salesOrg_ID', 
                         type: 'sap.ui.model.type.String',

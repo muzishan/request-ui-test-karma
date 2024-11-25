@@ -73,6 +73,11 @@ sap.ui.define([
                         oController.oCustomerDialog = oDialog;
                         oController.getView().addDependent(oController.oCustomerDialog);
                         oController.oCustomerDialog.open();
+                        if (oController.initialSalesOrgFilterForCustomer.length > 0) {
+
+                            oController.byId('comboBoxSalesOrgCustomerCreate').getBinding('items').filter(new sap.ui.model.Filter({ filters: oController.initialSalesOrgFilterForCustomer, and: false }));
+                        }
+
                     });
                 } else {
                     oController.oCustomerDialog.open();

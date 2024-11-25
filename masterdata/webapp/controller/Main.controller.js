@@ -32,12 +32,35 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             oRouter.getRoute("RouteMain").attachPatternMatched(this.onObjectMatched, this);
         },
         onObjectMatched: async function () {
-            const currentUser = await AjaxHelper.getCurrentUser(this);
+            this.currentUser = await AjaxHelper.getCurrentUser(this);
             let isAdmin = false;
-            if (currentUser.roles.some((role) => role.includes("SDR_Admins"))) {
+            if (this.currentUser.roles.some((role) => role.includes("SDR_Admins"))) {
                 isAdmin = true;
             }
             this.getView().setModel(new JSONModel({ isAdmin }), "currentUserModel");
+            this.setInitialFilterForSalesOrgCombox();
+        },
+        setInitialFilterForSalesOrgCombox: function () {
+            const filters = [];
+            if (this.currentUser.salesOfficeBranches.length > 0) {
+                for (const salesOfficeBranch of this.currentUser.salesOfficeBranches) {
+                  filters.push(
+                      new sap.ui.model.Filter({
+                          path: 'salesOffices',
+                          operator: sap.ui.model.FilterOperator.Any,
+                          variable: 'item',
+                          condition: new sap.ui.model.Filter({
+                              path: 'item/branch',
+                              operator: sap.ui.model.FilterOperator.EQ,
+                              value1: salesOfficeBranch
+                          }),
+                          and: false
+                      })
+                  );
+                }
+                this.byId("salesOrgCustomerSelect").getBinding("items").filter(new sap.ui.model.Filter({ filters: filters, and: false }));
+            }
+            this.initialSalesOrgFilterForCustomer = filters;
         },
         onTableSwitch: function (oEvent) {
             const sSelectedKey = oEvent.getParameter("key");
@@ -137,7 +160,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "series":
                     return ['codeSeriesDialogInput', 'descriptionSeriesDialogInput'];
                 case "batteryChargerDiscount":
-                    return ['comboBoxBatteryCharger', 'validFromBatteryChargerDiscountInput', 'discountBatteryChargerDiscountDialogInput', 'comboBoxSalesOrg'];
+                    return ['comboBoxBatteryCharger', 'datePickerValidFromBatteryChargerDiscount', 'discountBatteryChargerDiscountDialogInput', 'comboBoxSalesOrg'];
                 case "country":
                     return ['codeCountryDialogInput', 'nameCountryDialogInput'];
                 case "customer":
@@ -169,6 +192,11 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     CRUDHelper.createEntityContext(this, sEntityType, oData);
                 }
             }
+        },
+        liveCheckFormValidation: function (oEvent) {
+            const sEntityType = this.getCurrentEntityType();
+            const aInputIds = this.getValidationInputIds(sEntityType);
+            Validator.validateInputs(this, aInputIds.filter((inputId) => oEvent.getSource().sId.includes(inputId)));
         },
         createCompleted: function (oEvent) {
             const oTable = this.getTableByEntityType(this.sEntityType);
@@ -246,6 +274,9 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 oContext = oItem.getParent().oBindingContexts.batteryChargerDiscountModel;
             }
             const oData = Object.assign({}, oContext.getObject());
+            if (sEntityType === 'batteryChargerDiscount') {
+                oData.validFrom =  new Date(oData.validFrom);
+            }
             oData.isEdit = true;
             this.editContext = oContext;
             this.initEntityAddModel(sEntityType, oData);
@@ -281,7 +312,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     break;
                 case "batteryChargerDiscount":
                     oBindingContext = oButton.getParent().getParent().oBindingContexts.batteryChargerDiscountModel;
-                    sItemCode = oBindingContext.getObject().batteryCharger.code;
+                    sItemCode = oBindingContext.getObject().batteryCharger.code + ', validFrom:' + oBindingContext.getObject().validFrom;
                     sEntityName = oResourceBundle.getText("batteryChargerDiscount");
                     break;
                 case "country":
@@ -427,10 +458,10 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.EQ,
                     value1: sCategory
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`category eq '${sCategory}'`)
+                this.filterStrForExportBatteryChargerDiscount.push(`category eq '${sCategory}'`);
             }
             if (sSalesOrgCodes.length > 0) {
-                let filterStrArr = [];
+                const filterStrArr = [];
                 const filters = sSalesOrgCodes.map(function (code) {
                     filterStrArr.push(`salesOrg/code eq '${code}'`);
                     return new sap.ui.model.Filter({ path: 'salesOrg/code', operator: sap.ui.model.FilterOperator.EQ, value1: code, and: false });
@@ -445,7 +476,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     value1: sCode,
                     caseSensitive: false
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(batteryCharger/code),tolower('${sCode}'))`)
+                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(batteryCharger/code),tolower('${sCode}'))`);
             }
             if (sSeries) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -454,7 +485,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     value1: sSeries,
                     caseSensitive: false
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(series/code),tolower('${sSeries}'))`)
+                this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(series/code),tolower('${sSeries}'))`);
             }
             if (sValidFrom) {
                 const validFromDate = new Date(sValidFrom);
@@ -464,7 +495,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.LE,
                     value1: formattedDate
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`validFrom le '${formattedDate}'`)
+                this.filterStrForExportBatteryChargerDiscount.push(`validFrom le ${formattedDate}`);
             }
             if (sDiscount) {
                 aFilters.push(new sap.ui.model.Filter({
@@ -472,7 +503,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     operator: sap.ui.model.FilterOperator.GE,
                     value1: parseFloat(sDiscount)
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`discount ge ${parseFloat(sDiscount)}`)
+                this.filterStrForExportBatteryChargerDiscount.push(`discount ge ${parseFloat(sDiscount)}`);
             }
             return aFilters;
         },
@@ -625,7 +656,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
 
             if (sSalesOrgs.length > 0) {
-                let filterStrArr = [];
+                const filterStrArr = [];
                 const filters = sSalesOrgs.map(function (ID) {
                     filterStrArr.push(`salesOrg_ID eq ${ID}`);
                     return new sap.ui.model.Filter({ path: 'salesOrg_ID', operator: sap.ui.model.FilterOperator.EQ, value1: ID, and: false });
@@ -635,7 +666,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
 
             if (sIndustryCodes.length > 0) {
-                let filterStrArr = [];
+                const filterStrArr = [];
                 const filters = sIndustryCodes.map(function (ID) {
                     filterStrArr.push(`industryCode_ID eq ${ID}`);
                     return new sap.ui.model.Filter({ path: 'industryCode_ID', operator: sap.ui.model.FilterOperator.EQ, value1: ID, and: false });
@@ -645,7 +676,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
 
             if (sCountrys.length > 0) {
-                let filterStrArr = [];
+                const filterStrArr = [];
                 const filters = sCountrys.map(function (code) {
                     filterStrArr.push(`country_code eq ${code}`);
                     return new sap.ui.model.Filter({ path: 'country_code', operator: sap.ui.model.FilterOperator.EQ, value1: code, and: false });
@@ -827,6 +858,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.initUploadResultModel(result);
             this.oUploaderDialog.setBusy(false);
             this.getView().byId('resultPanel').setVisible(true);
+            this.byId('errorErrorDetail').setVisible(errorDetails.length > 0);
+            this.byId('errorList').setVisible(errorDetails.length > 0);
         },
 
         initUploadResultModel: function (result) {
@@ -913,7 +946,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 width: "20",
                 type: EdmType.Number,
                 scale: 2,
-                delimiter: true,
+                delimiter: true
             }, {
                 label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrgColumn"),
                 property: "salesOrg/code",

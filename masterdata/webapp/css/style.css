@@ -6,3 +6,29 @@
 .columnFlexBox .sapMFlexItem {
     width: 100% !important;
 }
+
+.sapSuccessfulBackground {
+    background-color: #ebf5cb;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+.sapErrorBackground {
+    background-color: #ffd0e7;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+.sapSuccessText {
+    color: green;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.sapErrorText {
+    color: red;
+    padding-left: 20px;
+    padding-right: 20px;
+}

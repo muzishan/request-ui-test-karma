@@ -10,7 +10,7 @@
     items="{
         path:'/BatteryChargers',
         sorter: {
-            path: 'category',
+            path: 'category,code',
             descending: false
         },
         parameters : {$count: true},
