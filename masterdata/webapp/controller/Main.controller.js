@@ -112,7 +112,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "batteryCharger":
                     return { category: 'BATTERY', code: '', description: '', active: true };
                 case "batteryChargerDiscount":
-                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: null, discount: 0.00, salesOrg_ID: '' };
+                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: undefined, discount: 0.00, salesOrg_ID: '' };
                 case "country":
                     return { code: '', name: '', active: true };
                 case "customer":
@@ -185,6 +185,9 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 const oData = oDataModel.getData();
                 if (sEntityType === "batteryChargerDiscount") {
                     oData.discount = parseFloat(oData.discount);
+                }
+                if (oData.validFrom instanceof Date) {
+                    oData.validFrom = oData.validFrom.toISOString().split("T")[0];
                 }
                 if (oData.isEdit) {
                     CRUDHelper.updateEntityContext(this, sEntityType, oData);
@@ -274,8 +277,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 oContext = oItem.getParent().oBindingContexts.batteryChargerDiscountModel;
             }
             const oData = Object.assign({}, oContext.getObject());
-            if (sEntityType === 'batteryChargerDiscount') {
-                oData.validFrom =  new Date(oData.validFrom);
+            if (oData.validFrom instanceof Date) {
+                oData.validFrom = oData.validFrom.toISOString().split("T")[0];
             }
             oData.isEdit = true;
             this.editContext = oContext;
