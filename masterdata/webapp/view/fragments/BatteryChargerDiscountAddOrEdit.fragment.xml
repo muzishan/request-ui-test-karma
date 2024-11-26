@@ -105,7 +105,6 @@
                         minimum: 1
                     },
                     formatOptions: {
-                        source: { pattern: 'yyyy-MM-dd' },
                         pattern: 'MMM dd, yyyy'
                     }
                 }"

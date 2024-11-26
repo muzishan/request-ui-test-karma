@@ -183,15 +183,17 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
 
             if (!bHasError) {
                 const oData = oDataModel.getData();
+                delete oData['@$ui5.context.isTransient'];
                 if (sEntityType === "batteryChargerDiscount") {
                     oData.discount = parseFloat(oData.discount);
-                }
-                if (oData.validFrom instanceof Date) {
-                    oData.validFrom = oData.validFrom.toISOString().split("T")[0];
                 }
                 if (oData.isEdit) {
                     CRUDHelper.updateEntityContext(this, sEntityType, oData);
                 } else {
+                    if (oData.validFrom instanceof Date) {
+                        oData.validFrom = oData.validFrom.toISOString().split("T")[0];
+                    }
+
                     CRUDHelper.createEntityContext(this, sEntityType, oData);
                 }
             }
@@ -277,8 +279,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 oContext = oItem.getParent().oBindingContexts.batteryChargerDiscountModel;
             }
             const oData = Object.assign({}, oContext.getObject());
-            if (oData.validFrom instanceof Date) {
-                oData.validFrom = oData.validFrom.toISOString().split("T")[0];
+            if (oData.validFrom && typeof oData.validFrom === "string") {
+                oData.validFrom = new Date(oData.validFrom);
             }
             oData.isEdit = true;
             this.editContext = oContext;
