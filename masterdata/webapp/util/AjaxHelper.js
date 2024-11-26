@@ -53,15 +53,6 @@ sap.ui.define([
                 });
             });
         },
-        downloadFile: function (url, name){
-            const a = document.createElement("a");
-            a.setAttribute("href", url);
-            a.setAttribute("download", name);
-            a.setAttribute("target", "_blank");
-            const clickEvent = document.createEvent("MouseEvents");
-            clickEvent.initEvent("click", true, true);
-            a.dispatchEvent(clickEvent);
-        },
         getCurrentUser: function (oController) {
             const host = oController.getView().getModel().sServiceUrl.split('/v4/')[0];
             const sUrl = host + "/v4/user-service/getCurrentUser()";

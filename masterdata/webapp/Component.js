@@ -38,12 +38,6 @@ sap.ui.define([
                 const jQueryScriptXlsx = document.createElement('script');
                 jQueryScriptXlsx.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.0/xlsx.js');
                 document.head.appendChild(jQueryScriptXlsx);
-
-                const oRootPath =  jQuery.sap.getModulePath("com.kion.sdr.ui.masterData");
-                const oFileModel = new sap.ui.model.json.JSONModel({
-                    path : oRootPath
-                });
-                this.setModel(oFileModel, "oFileModel");
             }
         });
     }

@@ -38,16 +38,16 @@ sap.ui.define([], function () {
         },
         formatUploadData: function (excelRow) {
             if (!excelRow || excelRow.length < 1 ) {
-                return null;
+                return 'Excel File';
             }
-            if (!Object.keys(excelRow[0]).includes('Category')
-                || !Object.keys(excelRow[0]).includes('Code')
-                || !Object.keys(excelRow[0]).includes('SeriesCode')
-                || !Object.keys(excelRow[0]).includes('SalesOrgCode')
-                || !Object.keys(excelRow[0]).includes('Discount')
-                || !Object.keys(excelRow[0]).includes('ValidFrom')
-            ) {
-                return null;
+            const errorField = [];
+            if (!Object.keys(excelRow[0]).includes('Category')) {errorField.push('Category');}
+            if (!Object.keys(excelRow[0]).includes('Code')) {errorField.push('Code');}
+            if (!Object.keys(excelRow[0]).includes('SalesOrgCode')) {errorField.push('SalesOrgCode');}
+            if (!Object.keys(excelRow[0]).includes('Discount')) {errorField.push('Discount');}
+            if (!Object.keys(excelRow[0]).includes('ValidFrom')) {errorField.push('ValidFrom');}
+            if (errorField.length > 0) {
+                return errorField.join(', ');
             }
             return excelRow.map((i) => {
                 const validFrom = i['ValidFrom'] ?  new Date(i['ValidFrom']) : undefined;
