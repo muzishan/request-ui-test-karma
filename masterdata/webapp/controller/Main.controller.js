@@ -809,8 +809,22 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
         },
         downloadBatteryChargerDiscountUploadTemplate: function () {
-            const rootPath = this.getView().getModel('oFileModel').getProperty('/path');
-            AjaxHelper.downloadFile(`${rootPath}/template/Battery_Charger_Discount_Template.xlsx`, 'Battery_Charger_Discount_Template.xlsx');
+            this.oBatteryChargerDiscountDownloadDataSource = [{
+                category: 'BATTERY',
+                batteryCharger: {code: 'sample battery code'},
+                series: {code: 'sample series code', description: 'sample series description'},
+                validFrom: '2024-01-01',
+                discount: 50.00,
+                salesOrg: {code: 'sample salesOrg code'}
+            },
+            {
+                category: 'CHARGER',
+                batteryCharger: {code: 'sample charger code'},
+                validFrom: '2024-01-01',
+                discount: 50.00,
+                salesOrg: {code: 'sample salesOrg code'}
+            }];
+            this.downloadExcelForBatteryChargerDiscount('Battery Charger Discount Template');
         },
 
         handleUploaderValueChange: function (e) {
@@ -828,10 +842,10 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     excelsheet.SheetNames.forEach(function (sheetName) {
                         const excelRow = XLSX.utils.sheet_to_row_object_array(excelsheet.Sheets[sheetName]);
                         that.uploadJson = Validator.formatUploadData(excelRow);
-                        if (that.uploadJson !== null) {
+                        if (typeof that.uploadJson !== 'string') {
                             that.getView().byId('upload').setEnabled(true);
                         } else {
-                            MessageBox.error(oResourceBundle.getText("plsCheckYourDataInExcelFile"), {
+                            MessageBox.error(oResourceBundle.getText("plsCheckYourDataInExcelFile", [that.uploadJson]), {
                                 icon: MessageBox.Icon.ERROR,
                                 title: oResourceBundle.getText("errorOcurredDuringExcelReading"),
                                 actions: MessageBox.Action.CANCEL
@@ -879,30 +893,33 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
         },
         fetchDownloadBatteryChargerDiscountData: function (url) {
             const that = this;
-            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
             AjaxHelper.fetchData(this, "/v4/batteryChargerDiscounts-service/" + url).then((res) => {
                 that.oBatteryChargerDiscountDownloadDataSource = that.oBatteryChargerDiscountDownloadDataSource.concat(res.value);
                 if (res['@nextLink']) {
                     that.fetchDownloadBatteryChargerDiscountData(res['@nextLink']);
                 } else {
-                    const oColConfig = that.createBatteryChargerDiscountColumnConfig();
-                    const oSheetConfig = {
-                        workbook: {
-                            columns: oColConfig,
-                            context: {
-                                sheetName: "BatteryChargerDiscount"
-                            }
-                        },
-                        dataSource: that.oBatteryChargerDiscountDownloadDataSource,
-                        fileName: "Battery Charger Discount.xlsx"
-                    };
-                    const oSheet = new Spreadsheet(oSheetConfig);
-                    oSheet.build().then(function () {
-                        MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
-                    }).finally(function () {
-                        oSheet.destroy();
-                    });
+                    that.downloadExcelForBatteryChargerDiscount('Battery Charger Discount');
                 }
+            });
+        },
+        downloadExcelForBatteryChargerDiscount: function (fileName) {
+            const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            const oColConfig = this.createBatteryChargerDiscountColumnConfig();
+            const oSheetConfig = {
+                workbook: {
+                    columns: oColConfig,
+                    context: {
+                        sheetName: "BatteryChargerDiscount"
+                    }
+                },
+                dataSource: this.oBatteryChargerDiscountDownloadDataSource,
+                fileName: `${fileName}.xlsx`
+            };
+            const oSheet = new Spreadsheet(oSheetConfig);
+            oSheet.build().then(function () {
+                MessageToast.show(oResourceBundle.getText("exportFinishedMessage"));
+            }).finally(function () {
+                oSheet.destroy();
             });
         },
         onPressBatteryChargerDiscountExportButton: function () {
