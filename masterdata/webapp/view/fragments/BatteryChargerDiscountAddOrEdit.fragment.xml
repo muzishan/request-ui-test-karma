@@ -103,6 +103,10 @@
                     type : 'sap.ui.model.type.Date',
                     constraints: {
                         minimum: 1
+                    },
+                    formatOptions: {
+                        source: { pattern: 'yyyy-MM-dd' },
+                        pattern: 'MMM dd, yyyy'
                     }
                 }"
                 required="true"/>

@@ -112,7 +112,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "batteryCharger":
                     return { category: 'BATTERY', code: '', description: '', active: true };
                 case "batteryChargerDiscount":
-                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: undefined, discount: 0.00, salesOrg_ID: '' };
+                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: null, discount: 0.00, salesOrg_ID: '' };
                 case "country":
                     return { code: '', name: '', active: true };
                 case "customer":
