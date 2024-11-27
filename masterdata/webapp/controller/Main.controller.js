@@ -452,7 +452,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             const sSalesOrgCodes = this.byId("salesOrgDiscountSelect").getSelectedKeys();
             const sCode = this.byId("codeDiscountInput").getValue();
             const sSeries = this.byId("seriesDiscountInput").getValue();
-            const sValidFrom = this.byId("validFromInput").getValue();
+            const sValidFrom = this.byId("validFromInput").getDateValue();
             let sDiscount = this.byId("discountInput").getValue();
             this.filterStrForExportBatteryChargerDiscount = [];
 
@@ -492,8 +492,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 this.filterStrForExportBatteryChargerDiscount.push(`contains(tolower(series/code),tolower('${sSeries}'))`);
             }
             if (sValidFrom) {
-                const validFromDate = new Date(sValidFrom);
-                const formattedDate = `${validFromDate.getFullYear()}-${String(validFromDate.getMonth() + 1).padStart(2, '0')}-${String(validFromDate.getDate()).padStart(2, '0')}`;
+                const formattedDate = `${sValidFrom.getFullYear()}-${String(sValidFrom.getMonth() + 1).padStart(2, '0')}-${String(sValidFrom.getDate()).padStart(2, '0')}`;
                 aFilters.push(new sap.ui.model.Filter({
                     path: 'validFrom',
                     operator: sap.ui.model.FilterOperator.LE,
