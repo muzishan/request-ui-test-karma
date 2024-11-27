@@ -44,7 +44,7 @@ sap.ui.define([], function () {
             if (!Object.keys(excelRow[0]).includes('Category')) {errorField.push('Category');}
             if (!Object.keys(excelRow[0]).includes('Code')) {errorField.push('Code');}
             if (!Object.keys(excelRow[0]).includes('SalesOrgCode')) {errorField.push('SalesOrgCode');}
-            if (!Object.keys(excelRow[0]).includes('Discount')) {errorField.push('Discount');}
+            if (!Object.keys(excelRow[0]).includes('Discount[%]')) {errorField.push('Discount[%]');}
             if (!Object.keys(excelRow[0]).includes('ValidFrom')) {errorField.push('ValidFrom');}
             if (errorField.length > 0) {
                 return errorField.join(', ');
@@ -56,7 +56,7 @@ sap.ui.define([], function () {
                     "code": i['Code'],
                     "seriesCode": i['SeriesCode'],
                     "salesOrgCode": i['SalesOrgCode'],
-                    "discount": parseFloat(i['Discount']),
+                    "discount": parseFloat(i['Discount[%]']),
                     "validFrom": validFrom ? `${validFrom.getFullYear()}-${String(validFrom.getMonth() + 1).padStart(2, '0')}-${String(validFrom.getDate()).padStart(2, '0')}` : undefined
                 };
             });

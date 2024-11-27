@@ -112,7 +112,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "batteryCharger":
                     return { category: 'BATTERY', code: '', description: '', active: true };
                 case "batteryChargerDiscount":
-                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: undefined, discount: 0.00, salesOrg_ID: '' };
+                    return { category: 'BATTERY', batteryCharger_ID: '', series_ID: null, validFrom: undefined, discount: '0.00', salesOrg_ID: '' };
                 case "country":
                     return { code: '', name: '', active: true };
                 case "customer":
@@ -187,13 +187,12 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 if (sEntityType === "batteryChargerDiscount") {
                     oData.discount = parseFloat(oData.discount);
                 }
+                if (oData.validFrom instanceof Date) {
+                    oData.validFrom = `${oData.validFrom.getFullYear()}-${String(oData.validFrom.getMonth() + 1).padStart(2, '0')}-${String(oData.validFrom.getDate()).padStart(2, '0')}`;
+                }
                 if (oData.isEdit) {
                     CRUDHelper.updateEntityContext(this, sEntityType, oData);
                 } else {
-                    if (oData.validFrom instanceof Date) {
-                        oData.validFrom = oData.validFrom.toISOString().split("T")[0];
-                    }
-
                     CRUDHelper.createEntityContext(this, sEntityType, oData);
                 }
             }
@@ -813,24 +812,6 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 this.oFileUploader = this.byId("fileUploader");
             }
         },
-        downloadBatteryChargerDiscountUploadTemplate: function () {
-            this.oBatteryChargerDiscountDownloadDataSource = [{
-                category: 'BATTERY',
-                batteryCharger: {code: 'sample battery code'},
-                series: {code: 'sample series code', description: 'sample series description'},
-                validFrom: '2024-01-01',
-                discount: 50.00,
-                salesOrg: {code: 'sample salesOrg code'}
-            },
-            {
-                category: 'CHARGER',
-                batteryCharger: {code: 'sample charger code'},
-                validFrom: '2024-01-01',
-                discount: 50.00,
-                salesOrg: {code: 'sample salesOrg code'}
-            }];
-            this.downloadExcelForBatteryChargerDiscount('Battery Charger Discount Template');
-        },
 
         handleUploaderValueChange: function (e) {
             const file = e.getParameter('files')[0]; // get the file from the FileUploader control
@@ -930,7 +911,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
         onPressBatteryChargerDiscountExportButton: function () {
             this.oBatteryChargerDiscountDownloadDataSource = [];
             const filterStr = this.filterStrForExportBatteryChargerDiscount && this.filterStrForExportBatteryChargerDiscount.length > 0 ? `&$filter=${this.filterStrForExportBatteryChargerDiscount.join(' and ')}` : '';
-            this.fetchDownloadBatteryChargerDiscountData(`BatteryChargerDiscounts?$top=1000&$count=true&$expand=batteryCharger,series,salesOrg&$orderby=batteryCharger/code${filterStr}`);
+            this.fetchDownloadBatteryChargerDiscountData(`BatteryChargerDiscounts?$top=1000&$count=true&$expand=batteryCharger,series,salesOrg&$orderby=category,batteryCharger/code,series/code,validFrom desc,salesOrg/code${filterStr}`);
         },
         createBatteryChargerDiscountColumnConfig: function () {
             return [{
@@ -942,6 +923,12 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             {
                 label: this.getView().getModel("i18n").getResourceBundle().getText("code"),
                 property: "batteryCharger/code",
+                width: "20",
+                type: EdmType.String
+            },
+            {
+                label: this.getView().getModel("i18n").getResourceBundle().getText("description"),
+                property: "batteryCharger/description",
                 width: "20",
                 type: EdmType.String
             },
@@ -969,9 +956,14 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 type: EdmType.Number,
                 scale: 2,
                 delimiter: true
-            }, {
+            },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrgColumn"),
                 property: "salesOrg/code",
+                type: EdmType.String,
+                width: "20"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrgDescription"),
+                property: "salesOrg/description",
                 type: EdmType.String,
                 width: "20"
             }];
