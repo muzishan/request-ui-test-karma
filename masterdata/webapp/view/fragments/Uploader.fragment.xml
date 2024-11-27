@@ -16,12 +16,6 @@
         <customHeader> 
             <Toolbar id="headerToolbar">
                 <Title id="uploadHeaderTitle" level="H3" text="{i18n>uploadBatteryChargerDiscount}" />
-                <ToolbarSpacer id="headerToolbarSpacer"/>
-                <Button id="downloadTemplate"
-                        type="Emphasized"
-                        text="{i18n>downloadTemplate}"
-                        icon="sap-icon://download-from-cloud"
-                        press=".downloadBatteryChargerDiscountUploadTemplate" />
 			</Toolbar>
         </customHeader>
         <content>

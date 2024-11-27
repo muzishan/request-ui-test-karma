@@ -49,11 +49,15 @@
                     path: '/BatteryChargers',
                     templateShareable: true,
                     sorter: { path: 'code' },
-                    filters: {
+                    filters: [{
                         path: 'category',
                         operator: 'EQ',
                         value1: 'BATTERY'
-                    }
+                    },{
+                        path: 'active',
+                        operator: 'EQ',
+                        value1: 'true'
+                    }]
                 }"
                 showSecondaryValues= "true"
                 selectionChange='.liveCheckFormValidation'
@@ -103,6 +107,9 @@
                     type : 'sap.ui.model.type.Date',
                     constraints: {
                         minimum: 1
+                    },
+                    formatOptions: {
+                        pattern: 'MMM dd, yyyy'
                     }
                 }"
                 required="true"/>

@@ -38,49 +38,40 @@
                 }"
             />
             <Label
-                id="nameLabel"
-                text="{i18n>name}"
+                id="additionalCustomerNoLabel"
+                text="{i18n>additionalCustomerNo}"
+            />
+            <Input
+                id="additionalCustomerNoInput"
+                value="{
+                        path: 'customerCreateModel>/additionalCustomerNo'
+                    }"
+            />
+            <Label
+                id="name1Label"
+                text="{i18n>name1}"
                 required="true"
             />
-            <FlexBox direction="Column" alignItems="Start" class="columnFlexBox">
-                <Input
-                    id="name1Input"
-                    change='.liveCheckFormValidation'
-                    value="{
-                            path: 'customerCreateModel>/name1', 
-                            type: 'sap.ui.model.type.String',
-                            constraints: {
-                                minLength: 1
-                            }
+            <Input
+                id="name1Input"
+                change='.liveCheckFormValidation'
+                value="{
+                        path: 'customerCreateModel>/name1', 
+                        type: 'sap.ui.model.type.String',
+                        constraints: {
+                            minLength: 1
+                        }
+                }"
+            />
+            <Label
+                id="name2Label"
+                text="{i18n>name2}"
+            />
+            <Input
+                id="name2Input"
+                value="{
+                            path: 'customerCreateModel>/name2'
                     }"
-                />
-                <Input
-                    id="name2Input"
-                    value="{
-                                path: 'customerCreateModel>/name2'
-                        }"
-                />
-            </FlexBox>
-
-            <Label
-                id="corporateCustomerNoLabel"
-                text="{i18n>corporateCustomerNo}"
-            />
-            <Input
-                id="corporateCustomerNoInput"
-                value="{
-                            path: 'customerCreateModel>/corporateCustomerNo'
-                        }"
-            />
-            <Label
-                id="addressNoLabel"
-                text="{i18n>addressNo}"
-            />
-            <Input
-                id="addressNoInput"
-                value="{
-                            path: 'customerCreateModel>/addressNo'
-                        }"
             />
             <Label
                 id="streetLabel"
@@ -113,21 +104,34 @@
                         }"
             />
             <Label
+                id="country_codeLabel"
+                text="{i18n>country}"
+            />
+            <ComboBox
+                id='comboBoxCountryCustomerCreate'
+                selectedKey="{customerCreateModel>/country_code}"
+                items="{
+                    path : '/SdrCountries',
+                    sorter : {
+                        path : 'code',
+                        descending : false
+                    },
+                    filters: {
+                        path: 'active',
+                        operator: 'EQ',
+                        value1: true
+                    }
+                }">
+                <core:ListItem key="{code}" text="{path: 'code', formatter: '.formatCountry'}"/>
+            </ComboBox>
+            <Label
                 id="industryLabel"
                 text="{i18n>industry}"
-                required="true"
             />
             <ComboBox id="comboBoxIndustryCustomerCreate"
                 name="industryCode"
                 placeholder="{i18n>industry}"
-                selectedKey="{
-                        path: 'customerCreateModel>/industryCode_ID', 
-                        type: 'sap.ui.model.type.String',
-                        constraints: {
-                            minLength: 1
-                        }
-                }"
-                selectionChange='.liveCheckFormValidation'
+                selectedKey="{customerCreateModel>/industryCode_ID}"
                 items="{
                     path : '/IndustryCodes',
                     sorter : {
@@ -137,24 +141,6 @@
                 }">
                 <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${description}}"/>
             </ComboBox>
-            <Label
-                id="lindeCustomerLabel"
-                text="{i18n>lindeCustomer}"
-            />
-            <CheckBox
-                id="lindeCustomerCheckBox"
-                selected="{path: 'customerCreateModel>/lindeCustomer', type: 'sap.ui.model.type.Boolean'}"
-            />
-            <Label
-                id="frameContractNumberLabel"
-                text="{i18n>frameContractNumber}"
-            />
-            <Input
-                id="frameContractNumberInput"
-                value="{
-                            path: 'customerCreateModel>/frameContractNumber'
-                        }"
-            />
             <Label
                 id="salesOrgLabel"
                 text="{i18n>salesOrg}"
@@ -181,26 +167,25 @@
                 <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${brand}}" additionalText="{description}"/>
             </ComboBox>
             <Label
-                id="country_codeLabel"
-                text="{i18n>country}"
+                id="frameContractNumberLabel"
+                text="{i18n>frameContractNumber}"
             />
-            <ComboBox
-                id='comboBoxCountryCustomerCreate'
-                selectedKey="{customerCreateModel>/country_code}"
-                items="{
-                    path : '/SdrCountries',
-                    sorter : {
-                        path : 'code',
-                        descending : false
-                    },
-                    filters: {
-                        path: 'active',
-                        operator: 'EQ',
-                        value1: true
-                    }
-                }">
-                <core:ListItem key="{code}" text="{path: 'code', formatter: '.formatCountry'}"/>
-            </ComboBox>
+            <Input
+                id="frameContractNumberInput"
+                value="{
+                            path: 'customerCreateModel>/frameContractNumber'
+                        }"
+            />
+            <Label
+                id="kionCustomerNoLabel"
+                text="{i18n>kionCustomerNo}"
+            />
+            <Input
+                id="kionCustomerNoInput"
+                value="{
+                            path: 'customerCreateModel>/kionCustomerNo'
+                        }"
+            />
         </l:SimpleForm>
         <footer>
             <OverflowToolbar id="customerCreateFooter">

@@ -3,10 +3,6 @@
     border-bottom: none !important;
 }
 
-.columnFlexBox .sapMFlexItem {
-    width: 100% !important;
-}
-
 .sapSuccessfulBackground {
     background-color: #ebf5cb;
     padding: 2px 5px;
