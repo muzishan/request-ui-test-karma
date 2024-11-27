@@ -116,7 +116,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "country":
                     return { code: '', name: '', active: true };
                 case "customer":
-                    return { name1: '', name2: '', salesOrg_ID: null, customerNo: '', addressNo: '', corporateCustomerNo: '', street: '', location: '', industryCode_ID: null, lindeCustomer: true, postCode: '', frameContractNumber: '', country_code: ''};
+                    return { name1: '', name2: '', salesOrg_ID: null, customerNo: '', additionalCustomerNo: '', kionCustomerNo: '', street: '', location: '', industryCode_ID: null, postCode: '', frameContractNumber: '', country_code: ''};
                 default:
                     return {};
             }
@@ -164,7 +164,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 case "country":
                     return ['codeCountryDialogInput', 'nameCountryDialogInput'];
                 case "customer":
-                    return ['name1Input', 'comboBoxIndustryCustomerCreate', 'comboBoxSalesOrgCustomerCreate'];
+                    return ['name1Input', 'comboBoxSalesOrgCustomerCreate'];
                 default:
                     return [];
             }
@@ -453,7 +453,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             const sCode = this.byId("codeDiscountInput").getValue();
             const sSeries = this.byId("seriesDiscountInput").getValue();
             const sValidFrom = this.byId("validFromInput").getValue();
-            const sDiscount = this.byId("discountInput").getValue();
+            let sDiscount = this.byId("discountInput").getValue();
             this.filterStrForExportBatteryChargerDiscount = [];
 
             if (sCategory) {
@@ -502,12 +502,15 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 this.filterStrForExportBatteryChargerDiscount.push(`validFrom le ${formattedDate}`);
             }
             if (sDiscount) {
+                if (Formatter.checkIfUseCommaAsDecimalSeperator()){
+                    sDiscount = Formatter.replaceCommaToPointAsDecimalSeperator(sDiscount);
+                }
                 aFilters.push(new sap.ui.model.Filter({
                     path: "discount",
-                    operator: sap.ui.model.FilterOperator.GE,
+                    operator: sap.ui.model.FilterOperator.EQ,
                     value1: parseFloat(sDiscount)
                 }));
-                this.filterStrForExportBatteryChargerDiscount.push(`discount ge ${parseFloat(sDiscount)}`);
+                this.filterStrForExportBatteryChargerDiscount.push(`discount eq ${parseFloat(sDiscount)}`);
             }
             return aFilters;
         },
@@ -547,14 +550,14 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
         customerFilters: function (oEvent) {
             const aFilters = [];
             const sCustomerNo = this.byId("customerNoCustomerFilterInput").getValue();
-            const sName = this.byId("nameCustomerFilterInput").getValue();
-            const sCorporateCustomerNo = this.byId("corporateCustomerNoFilterInput").getValue();
-            const sAddressNo = this.byId("addressNoFilterInput").getValue();
+            const sName1 = this.byId("name1CustomerFilterInput").getValue();
+            const sName2 = this.byId("name2CustomerFilterInput").getValue();
+            const sKionCustomerNo = this.byId("kionCustomerNoFilterInput").getValue();
+            const sAdditionalCustomerNo = this.byId("additionalCustomerNoFilterInput").getValue();
             const sStreet = this.byId("streetFilterInput").getValue();
             const sLocation = this.byId("locationFilterInput").getValue();
             const sPostCode = this.byId("postCodeFilterInput").getValue();
             const sFrameContractNumber = this.byId("frameContractNumberFilterInput").getValue();
-            const sLindeCustomer = this.byId("lindeCustomerFilterSelect").getSelectedKey();
             const sSalesOrgs = this.byId('salesOrgCustomerSelect').getSelectedKeys();
             const sIndustryCodes = this.byId('industryCustomerSelect').getSelectedKeys();
             const sCountrys = this.byId('countryCustomerSelect').getSelectedKeys();
@@ -570,42 +573,44 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 this.filterStrForExportCustomer.push(`contains(tolower(customerNo),tolower('${sCustomerNo}'))`);
             }
 
-            if (sName) {
-                aFilters.push(new sap.ui.model.Filter({ filters: [
-                    new sap.ui.model.Filter({
-                        path: "name1",
-                        operator: sap.ui.model.FilterOperator.Contains,
-                        value1: sName,
-                        caseSensitive: false
-                    }),
-                    new sap.ui.model.Filter({
-                        path: "name2",
-                        operator: sap.ui.model.FilterOperator.Contains,
-                        value1: sName,
-                        caseSensitive: false
-                    })
-                ], and: false }));
-                this.filterStrForExportCustomer.push(`(contains(tolower(name1),tolower('${sName}'))%20or%20contains(tolower(name2),tolower('${sName}')))`);
-            }
-
-            if (sCorporateCustomerNo) {
+            if (sName1) {
                 aFilters.push(new sap.ui.model.Filter({
-                    path: "corporateCustomerNo",
+                    path: "name1",
                     operator: sap.ui.model.FilterOperator.Contains,
-                    value1: sCorporateCustomerNo,
+                    value1: sName1,
                     caseSensitive: false
                 }));
-                this.filterStrForExportCustomer.push(`contains(tolower(corporateCustomerNo),tolower('${sCorporateCustomerNo}'))`);
+                this.filterStrForExportCustomer.push(`contains(tolower(name1),tolower('${sName1}'))`);
             }
 
-            if (sAddressNo) {
+            if (sName2) {
                 aFilters.push(new sap.ui.model.Filter({
-                    path: "addressNo",
+                    path: "name2",
                     operator: sap.ui.model.FilterOperator.Contains,
-                    value1: sAddressNo,
+                    value1: sName2,
                     caseSensitive: false
                 }));
-                this.filterStrForExportCustomer.push(`contains(tolower(addressNo),tolower('${sAddressNo}'))`);
+                this.filterStrForExportCustomer.push(`contains(tolower(name2),tolower('${sName2}'))`);
+            }
+
+            if (sKionCustomerNo) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "kionCustomerNo",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sKionCustomerNo,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(kionCustomerNo),tolower('${sKionCustomerNo}'))`);
+            }
+
+            if (sAdditionalCustomerNo) {
+                aFilters.push(new sap.ui.model.Filter({
+                    path: "additionalCustomerNo",
+                    operator: sap.ui.model.FilterOperator.Contains,
+                    value1: sAdditionalCustomerNo,
+                    caseSensitive: false
+                }));
+                this.filterStrForExportCustomer.push(`contains(tolower(additionalCustomerNo),tolower('${sAdditionalCustomerNo}'))`);
             }
 
             if (sStreet) {
@@ -646,17 +651,6 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     caseSensitive: false
                 }));
                 this.filterStrForExportCustomer.push(`contains(tolower(frameContractNumber),tolower('${sFrameContractNumber}'))`);
-            }
-
-            if (sLindeCustomer != '') {
-                const isLindeCustomer = sLindeCustomer === "true";
-                aFilters.push(new sap.ui.model.Filter({
-                    path: "lindeCustomer",
-                    operator: sap.ui.model.FilterOperator.EQ,
-                    value1: isLindeCustomer,
-                    caseSensitive: false
-                }));
-                this.filterStrForExportCustomer.push(`lindeCustomer eq ${isLindeCustomer}`);
             }
 
             if (sSalesOrgs.length > 0) {
@@ -715,14 +709,14 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId("nameCountryInput").setValue("");
             // Customer
             this.getView().byId("customerNoCustomerFilterInput").setValue("");
-            this.getView().byId("nameCustomerFilterInput").setValue("");
-            this.getView().byId("corporateCustomerNoFilterInput").setValue("");
-            this.getView().byId("addressNoFilterInput").setValue("");
+            this.getView().byId("name1CustomerFilterInput").setValue("");
+            this.getView().byId("name2CustomerFilterInput").setValue("");
+            this.getView().byId("kionCustomerNoFilterInput").setValue("");
+            this.getView().byId("additionalCustomerNoFilterInput").setValue("");
             this.getView().byId("streetFilterInput").setValue("");
             this.getView().byId("locationFilterInput").setValue("");
             this.getView().byId("postCodeFilterInput").setValue("");
             this.getView().byId("frameContractNumberFilterInput").setValue("");
-            this.getView().byId("lindeCustomerFilterSelect").setSelectedKey("");
             this.getView().byId("salesOrgCustomerSelect").removeAllSelectedItems("");
             this.getView().byId("industryCustomerSelect").removeAllSelectedItems("");
             this.getView().byId("countryCustomerSelect").removeAllSelectedItems("");
@@ -769,6 +763,11 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     path: 'category',
                     operator: FilterOperator.EQ,
                     value1: category
+                }),
+                new Filter({
+                    path: 'active',
+                    operator: FilterOperator.EQ,
+                    value1: true
                 })
             ]);
         },
@@ -860,6 +859,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId('resultPanel').setVisible(true);
             this.byId('errorErrorDetail').setVisible(errorDetails.length > 0);
             this.byId('errorList').setVisible(errorDetails.length > 0);
+            this.getView().byId("tableBatteryChargerDiscount").getBinding('items').refresh();
         },
 
         initUploadResultModel: function (result) {
@@ -971,13 +971,16 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
         fetchDownloadCustomerData: function (url) {
             const that = this;
             const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+            const countries =  this.getCountries();
             AjaxHelper.fetchData(this, "/v4/master-data-service/" + url).then((res) => {
-                that.oCustomerDownloadDataSource = that.oCustomerDownloadDataSource.concat(res.value.map((item) => {
-                    return {
+                that.oCustomerDownloadDataSource = that.oCustomerDownloadDataSource.concat(res.value.map(
+                    (item) => {
+return {
                         ...item,
-                        lindeCustomer: item.lindeCustomer ? oResourceBundle.getText("yes") : oResourceBundle.getText("no")
+                        countryName: countries.find((country) => country.code === item.country_code)?.name
                     };
-                }));
+}
+                ));
                 if (res['@nextLink']) {
                     that.fetchDownloadCustomerData(res['@nextLink']);
                 } else {
@@ -1012,44 +1015,24 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 property: "customerNo",
                 width: "20",
                 type: EdmType.String
-            },
-            {
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("additionalCustomerNo"),
+                property: "additionalCustomerNo",
+                width: "20",
+                type: EdmType.String
+            },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("name1"),
                 property: "name1",
                 width: "20",
                 type: EdmType.String
-            },
-            {
+            },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("name2"),
                 property: "name2",
                 width: "20",
                 type: EdmType.String
-            },
-            {
-                label: this.getView().getModel("i18n").getResourceBundle().getText("corporateCustomerNo"),
-                property: "corporateCustomerNo",
-                width: "20",
-                type: EdmType.String
-            },
-            {
-                label: this.getView().getModel("i18n").getResourceBundle().getText("addressNo"),
-                property: "addressNo",
-                width: "20",
-                type: EdmType.String
-            },
-            {
+            },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("street"),
                 property: "street",
-                width: "20",
-                type: EdmType.String
-            },{
-                label: this.getView().getModel("i18n").getResourceBundle().getText("location"),
-                property: "location",
-                width: "20",
-                type: EdmType.String
-            },{
-                label: this.getView().getModel("i18n").getResourceBundle().getText("lindeCustomer"),
-                property: "lindeCustomer",
                 width: "20",
                 type: EdmType.String
             },{
@@ -1058,25 +1041,50 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 width: "20",
                 type: EdmType.String
             },{
-                label: this.getView().getModel("i18n").getResourceBundle().getText("frameContractNumber"),
-                property: "frameContractNumber",
+                label: this.getView().getModel("i18n").getResourceBundle().getText("location"),
+                property: "location",
                 width: "20",
                 type: EdmType.String
             },{
-                label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrg"),
-                property: "salesOrg/code",
+                label: this.getView().getModel("i18n").getResourceBundle().getText("country"),
+                property: "country_code",
                 type: EdmType.String,
-                width: "10"
+                width: "20"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("countryName"),
+                property: "countryName",
+                type: EdmType.String,
+                width: "20"
             },{
                 label: this.getView().getModel("i18n").getResourceBundle().getText("industry"),
                 property: "industryCode/code",
                 type: EdmType.String,
                 width: "20"
             },{
-                label: this.getView().getModel("i18n").getResourceBundle().getText("country"),
-                property: "country_code",
+                label: this.getView().getModel("i18n").getResourceBundle().getText("industryCodeDescription"),
+                property: "industryCode/description",
                 type: EdmType.String,
                 width: "20"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrg"),
+                property: "salesOrg/code",
+                type: EdmType.String,
+                width: "10"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("salesOrgDescription"),
+                property: "salesOrg/description",
+                type: EdmType.String,
+                width: "20"
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("frameContractNumber"),
+                property: "frameContractNumber",
+                width: "20",
+                type: EdmType.String
+            },{
+                label: this.getView().getModel("i18n").getResourceBundle().getText("kionCustomerNo"),
+                property: "kionCustomerNo",
+                width: "20",
+                type: EdmType.String
             }];
         }
     });

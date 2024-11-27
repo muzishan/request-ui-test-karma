@@ -193,13 +193,7 @@
                 />
                 <Text
                     id="txtValidFromDiscount"
-                    text="{
-                        path: 'batteryChargerDiscountModel>validFrom',
-                        type: 'sap.ui.model.odata.type.Date',
-                        formatOptions: {
-                        pattern: 'yyyy-MM-dd'
-                        }
-                    }"
+                    text="{batteryChargerDiscountModel>validFrom}"
                 />
                 <Text
                     id="txtDiscount"

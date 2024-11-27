@@ -9,6 +9,20 @@ sap.ui.define([], function () {
         },
         formatDialogTitle: function (payload, sAddTitle, sUpdateTitle) {
             return payload.isEdit ? sUpdateTitle + ' ' + payload.code : sAddTitle;
+        },
+        checkIfUseCommaAsDecimalSeperator: function () {
+            const numberWithDecimal = 1.1;
+            const formattedNumber = numberWithDecimal.toLocaleString();
+            return formattedNumber.includes(',');
+        },
+        replaceCommaToPointAsDecimalSeperator: function (num) {
+            num = typeof num === "string" ? num : num?.toString();
+            if (this.checkIfUseCommaAsDecimalSeperator()) {
+                num = num.replace(/\./g, '').replace(',', '.');
+            } else {
+                num = num.replace(/\,/g, '');
+            }
+            return parseFloat(num);
         }
     };
 });
