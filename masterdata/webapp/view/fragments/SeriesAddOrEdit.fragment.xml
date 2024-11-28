@@ -7,7 +7,8 @@
         id="seriesDialog"
         title="{
                     parts: [
-                        'seriesCreateModel>/',
+                        'seriesCreateModel>/isEdit',
+                        'seriesCreateModel>/code',
                         'i18n>seriesDialogAdd',
                         'i18n>seriesDialogUpdate'
                     ],

@@ -15,7 +15,14 @@
     >
         <customHeader> 
             <Toolbar id="headerToolbar">
-                <Title id="uploadHeaderTitle" level="H3" text="{i18n>uploadBatteryChargerDiscount}" />
+                <Title id="uploadHeaderTitle" level="H3" text="{
+                    parts: [
+                        'uploadModel>/uploadTarget',
+                        'i18n>uploadBatteryChargerDiscount',
+                        'i18n>uploadCustomer'
+                    ],
+                    formatter: '.formatter.formatUploadDialogTitle'
+                }" />
 			</Toolbar>
         </customHeader>
         <content>
@@ -78,7 +85,7 @@
                         type="Emphasized"
                         text="{i18n>upload}"
                         enabled="false"
-                        press=".doUploadBatteryChargerDiscount" />
+                        press=".doUpload" />
                 <Button id="cancel"
                     text="{i18n>cancel}"
                     press=".closeUploadDialog"

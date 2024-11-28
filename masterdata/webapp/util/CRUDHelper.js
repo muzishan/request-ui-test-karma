@@ -12,7 +12,7 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
             const oContext = oController.editContext;
             const promises = [];
             for (const key in oData) {
-                if (Object.hasOwn(oData, key) && !['isEdit', 'contextPath'].includes(key)) {
+                if (Object.hasOwn(oData, key) && !['isEdit', 'contextPath', 'country', 'industryCode', 'salesOrg'].includes(key)) {
                     promises.push(new Promise((resolve, reject) => {
                         oContext.setProperty(key, oData[key]).then(
                             () => resolve(!oContext.hasPendingChanges()),

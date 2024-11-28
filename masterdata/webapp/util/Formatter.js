@@ -7,8 +7,11 @@ sap.ui.define([], function () {
         saveButtonText: function (isEdit, sSaveText, sUpdateText) {
             return isEdit ? sUpdateText : sSaveText;
         },
-        formatDialogTitle: function (payload, sAddTitle, sUpdateTitle) {
-            return payload.isEdit ? sUpdateTitle + ' ' + payload.code : sAddTitle;
+        formatDialogTitle: function (isEdit, updateTarget, sAddTitle, sUpdateTitle) {
+            return isEdit ? sUpdateTitle + ' ' + updateTarget : sAddTitle;
+        },
+        formatUploadDialogTitle: function (uploadTarget, uploadBatteryChargerDiscountTitle, uploadCustomerTitle) {
+            return uploadTarget === 'batteryChargerDiscount' ? uploadBatteryChargerDiscountTitle : uploadCustomerTitle;
         },
         checkIfUseCommaAsDecimalSeperator: function () {
             const numberWithDecimal = 1.1;

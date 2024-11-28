@@ -41,11 +41,17 @@
                 visible="{= ${currentUserModel>/isAdmin}}"
             />
             <Button
+                id="importCustomer"
+                text="{i18n>import}"
+                icon="sap-icon://excel-attachment"
+                press=".onPressImportButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button
                 id="exportButtonCustomer"
                 text="{i18n>export}"
                 icon="sap-icon://excel-attachment"
                 press=".onPressCustomerExportButton"
-                visible="{= ${currentUserModel>/isAdmin}}"
             />
             <Button 
                 id="clearFiltersCustomer" 

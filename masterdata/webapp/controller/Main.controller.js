@@ -190,6 +190,12 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 if (oData.validFrom instanceof Date) {
                     oData.validFrom = `${oData.validFrom.getFullYear()}-${String(oData.validFrom.getMonth() + 1).padStart(2, '0')}-${String(oData.validFrom.getDate()).padStart(2, '0')}`;
                 }
+                // set to null when a property is empty string for align with import
+                if (sEntityType === 'customer') {
+                    for (const key in oData) {
+                        oData[key] = oData[key] || null;
+                    }
+                }
                 if (oData.isEdit) {
                     CRUDHelper.updateEntityContext(this, sEntityType, oData);
                 } else {
@@ -805,6 +811,8 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
         },
         onPressImportButton: function (oEvent) {
+            this.uploadTarget = this.getCurrentEntityType();
+            this.getView().setModel(new JSONModel({uploadTarget: this.uploadTarget}), 'uploadModel');
             DialogHelper.initUploaderDialog(this);
             if (!this.oFileUploader) {
                 this.oFileUploader = this.byId("fileUploader");
@@ -825,7 +833,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                     });
                     excelsheet.SheetNames.forEach(function (sheetName) {
                         const excelRow = XLSX.utils.sheet_to_row_object_array(excelsheet.Sheets[sheetName]);
-                        that.uploadJson = Validator.formatUploadData(excelRow);
+                        that.uploadJson = Validator.formatUploadData(excelRow, that.uploadTarget);
                         if (typeof that.uploadJson !== 'string') {
                             that.getView().byId('upload').setEnabled(true);
                         } else {
@@ -841,8 +849,15 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             }
         },
 
-        doUploadBatteryChargerDiscount: async function () {
-            const result = await AjaxHelper.uploadBatteryChargerDiscounts(this, this.uploadJson);
+        doUpload: async function (oEvent) {
+            let result;
+            if (this.uploadTarget === 'batteryChargerDiscount') {
+                result = await AjaxHelper.uploadBatteryChargerDiscounts(this, this.uploadJson);
+                this.getView().byId("tableBatteryChargerDiscount").getBinding('items').refresh();
+            } else if (this.uploadTarget === 'customer') {
+                result = await AjaxHelper.uploadCustomers(this, this.uploadJson);
+                this.getView().byId("tableCustomer").getBinding('items').refresh();
+            }
             const errorDetails = [];
             for (const row of result.errorDetails) {
                 errorDetails.push(
@@ -858,7 +873,6 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
             this.getView().byId('resultPanel').setVisible(true);
             this.byId('errorErrorDetail').setVisible(errorDetails.length > 0);
             this.byId('errorList').setVisible(errorDetails.length > 0);
-            this.getView().byId("tableBatteryChargerDiscount").getBinding('items').refresh();
         },
 
         initUploadResultModel: function (result) {
@@ -909,7 +923,7 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
         },
         onPressBatteryChargerDiscountExportButton: function () {
             this.oBatteryChargerDiscountDownloadDataSource = [];
-            const filterStr = this.filterStrForExportBatteryChargerDiscount && this.filterStrForExportBatteryChargerDiscount.length > 0 ? `&$filter=${this.filterStrForExportBatteryChargerDiscount.join(' and ')}` : '';
+            const filterStr = this.filterStrForExportBatteryChargerDiscount && this.filterStrForExportBatteryChargerDiscount.length > 0 ? `&$filter=${encodeURIComponent(this.filterStrForExportBatteryChargerDiscount.join(' and '))}` : '';
             this.fetchDownloadBatteryChargerDiscountData(`BatteryChargerDiscounts?$top=1000&$count=true&$expand=batteryCharger,series,salesOrg&$orderby=category,batteryCharger/code,series/code,validFrom desc,salesOrg/code${filterStr}`);
         },
         createBatteryChargerDiscountColumnConfig: function () {
@@ -1005,7 +1019,7 @@ return {
         },
         onPressCustomerExportButton: function () {
             this.oCustomerDownloadDataSource = [];
-            const filterStr = this.filterStrForExportCustomer && this.filterStrForExportCustomer.length > 0 ? `&$filter=${this.filterStrForExportCustomer.join(' and ')}` : '';
+            const filterStr = this.filterStrForExportCustomer && this.filterStrForExportCustomer.length > 0 ? `&$filter=${encodeURIComponent(this.filterStrForExportCustomer.join(' and '))}` : '';
             this.fetchDownloadCustomerData(`Customers?$top=1000&$count=true&$expand=salesOrg,industryCode,country&$orderby=customerNo,name1${filterStr}`);
         },
         createCustomerColumnConfig: function () {

@@ -7,7 +7,8 @@
         id="batteryChargerDialog"
         title="{
                     parts: [
-                        'batteryChargerCreateModel>/',
+                        'batteryChargerCreateModel>/isEdit',
+                        'batteryChargerCreateModel>/code',
                         'i18n>batteryChargerDialogAdd',
                         'i18n>batteryChargerDialogUpdate'
                     ],

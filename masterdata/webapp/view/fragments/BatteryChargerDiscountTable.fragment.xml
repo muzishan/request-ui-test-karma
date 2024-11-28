@@ -51,7 +51,6 @@
                 text="{i18n>export}"
                 icon="sap-icon://excel-attachment"
                 press=".onPressBatteryChargerDiscountExportButton"
-                visible="{= ${currentUserModel>/isAdmin}}"
             />
             <Button 
                 id="clearFiltersBatteryChargerDiscount" 

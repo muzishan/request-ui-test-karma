@@ -53,6 +53,25 @@ sap.ui.define([
                 });
             });
         },
+        uploadCustomers(oController, oData) {
+            const sUrl = this.getHost(oController) + "/v4/master-data-service/uploadCustomers";
+            const json = JSON.stringify({customers: oData});
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    async: true,
+                    url: sUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: json,
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
         getCurrentUser: function (oController) {
             const host = oController.getView().getModel().sServiceUrl.split('/v4/')[0];
             const sUrl = host + "/v4/user-service/getCurrentUser()";
