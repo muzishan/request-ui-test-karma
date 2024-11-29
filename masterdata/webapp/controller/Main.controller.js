@@ -130,6 +130,16 @@ function (Controller, AjaxHelper, Formatter, JSONModel, DialogHelper, CRUDHelper
                 if (sEntityType === 'batteryChargerDiscount' && oData.category) {
                     this.setFilterForBatteryCharger(oData.category);
                 }
+                // refresh options of combobox after dialog open again
+                if (sEntityType === 'batteryChargerDiscount') {
+                    this.getView().byId("comboBoxBatteryCharger").getBinding('items').refresh();
+                    this.getView().byId("comboBoxSeries").getBinding('items').refresh();
+                    this.getView().byId("comboBoxSalesOrg").getBinding('items').refresh();
+                } else if (sEntityType === 'customer') {
+                    this.getView().byId("comboBoxCountryCustomerCreate").getBinding('items').refresh();
+                    this.getView().byId("comboBoxIndustryCustomerCreate").getBinding('items').refresh();
+                    this.getView().byId("comboBoxSalesOrgCustomerCreate").getBinding('items').refresh();
+                }
                 oCreateModel.setData(oData);
             }
         },

@@ -35,7 +35,7 @@ sap.ui.define(["sap/m/MessageBox"], function (MessageBox) {
                     const oTable = oController.getTableByEntityType(sEntityType);
                     oTable.getBinding("items").refresh();
                 }).catch((error) => {
-                    sap.m.MessageBox.error(oResourceBundle.getText("deleteErrorMessage"));
+                    sap.m.MessageBox.error(error.message);
                 });
             }
         }

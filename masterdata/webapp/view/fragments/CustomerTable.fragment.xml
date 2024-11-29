@@ -179,6 +179,7 @@
                         items="{
                             path: '/SdrCountries',
                             templateShareable: true,
+                            length : '1000',
                             sorter: { path: 'code' }
                         }"
                         showSecondaryValues= "true"
@@ -205,6 +206,7 @@
                         width="100%"
                         items="{
                             path: '/IndustryCodes',
+                            length : '1000',
                             templateShareable: true,
                             sorter: { path: 'code' }
                         }"

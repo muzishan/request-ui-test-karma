@@ -113,6 +113,7 @@
                 selectedKey="{customerCreateModel>/country_code}"
                 items="{
                     path : '/SdrCountries',
+                    length : '1000',
                     sorter : {
                         path : 'code',
                         descending : false
@@ -135,6 +136,7 @@
                 selectedKey="{customerCreateModel>/industryCode_ID}"
                 items="{
                     path : '/IndustryCodes',
+                    length : '1000',
                     sorter : {
                         path : 'code',
                         descending : false
