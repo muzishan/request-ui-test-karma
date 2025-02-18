@@ -1,0 +1,56 @@
+<mvc:View controllerName="com.kion.sdr.ui.masterdata.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:layout="sap.ui.layout">
+    <f:DynamicPage
+        id="dynamicPage"
+        headerExpanded="true"    
+    >
+        <f:title>
+            <f:DynamicPageTitle id="dynamicPageTitle">
+                <f:heading>
+                    <Title
+                        id="mainTitle"
+                        text="{i18n>title}"
+                    />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <Panel id="segmentedTablePanel">
+                <IconTabHeader id="iconTabHeader" select=".onTableSwitch">
+                    <items>
+                        <IconTabFilter id="seriesButton" key="seriesButton" text="{i18n>series}" />
+                        <IconTabFilter id="countryButton" key="countryButton" text="{i18n>country}" />
+                        <IconTabFilter id="batteryAndChargerButton" key="batteryAndChargerButton" text="{i18n>batteryCharger}" />
+                        <IconTabFilter id="batteryAndChargerDiscountButton" key="batteryAndChargerDiscountButton" text="{i18n>batteryChargerDiscount}" />
+                        <IconTabFilter id="customerButton" key="customerButton" text="{i18n>customer}" />
+                    </items>
+                </IconTabHeader>
+            <core:Fragment
+                fragmentName="com.kion.sdr.ui.masterdata.view.fragments.SeriesTable"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="com.kion.sdr.ui.masterdata.view.fragments.CountryTable"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="com.kion.sdr.ui.masterdata.view.fragments.BatteryChargerTable"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="com.kion.sdr.ui.masterdata.view.fragments.BatteryChargerDiscountTable"
+                type="XML"
+            />
+            <core:Fragment
+                fragmentName="com.kion.sdr.ui.masterdata.view.fragments.CustomerTable"
+                type="XML"
+            />
+            </Panel>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

@@ -1,0 +1,227 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="cretaeCustomerDialog"
+        title="{
+            parts: [
+                'customerCreateModel>/isEdit',
+                'customerCreateModel>/name1',
+                'i18n>customerDialogAdd',
+                'i18n>customerDialogUpdate'
+            ],
+            formatter: '.formatter.formatDialogTitle'
+        }"
+        verticalScrolling="true"
+        contentWidth="560px"
+    >
+        <l:SimpleForm
+            id="simpleForm"
+            editable="true"
+            labelSpanXL="4"  
+            labelSpanL="4"   
+            labelSpanM="4"    
+            labelSpanS="4"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="customerNoLabel"
+                text="{i18n>customerNo}"
+            />
+            <Input
+                id="customerNoInput"
+                value="{
+                    path: 'customerCreateModel>/customerNo'
+                }"
+            />
+            <Label
+                id="additionalCustomerNoLabel"
+                text="{i18n>additionalCustomerNo}"
+            />
+            <Input
+                id="additionalCustomerNoInput"
+                value="{
+                        path: 'customerCreateModel>/additionalCustomerNo'
+                    }"
+            />
+            <Label
+                id="name1Label"
+                text="{i18n>name1}"
+                required="true"
+            />
+            <Input
+                id="name1Input"
+                change='.liveCheckFormValidation'
+                value="{
+                        path: 'customerCreateModel>/name1', 
+                        type: 'sap.ui.model.type.String',
+                        constraints: {
+                            minLength: 1
+                        }
+                }"
+            />
+            <Label
+                id="name2Label"
+                text="{i18n>name2}"
+            />
+            <Input
+                id="name2Input"
+                value="{
+                            path: 'customerCreateModel>/name2'
+                    }"
+            />
+            <Label
+                id="streetLabel"
+                text="{i18n>street}"
+            />
+            <Input
+                id="streetInput"
+                value="{
+                            path: 'customerCreateModel>/street'
+                        }"
+            />
+            <Label
+                id="postCodeLabel"
+                text="{i18n>postCode}"
+            />
+            <Input
+                id="postCodeInput"
+                value="{
+                            path: 'customerCreateModel>/postCode'
+                        }"
+            />
+            <Label
+                id="locationLabel"
+                text="{i18n>location}"
+            />
+            <Input
+                id="locationInput"
+                value="{
+                            path: 'customerCreateModel>/location'
+                        }"
+            />
+            <Label
+                id="country_codeLabel"
+                text="{i18n>country}"
+            />
+            <ComboBox
+                id='comboBoxCountryCustomerCreate'
+                selectedKey="{customerCreateModel>/country_code}"
+                items="{
+                    path : '/SdrCountries',
+                    length : '1000',
+                    sorter : {
+                        path : 'code',
+                        descending : false
+                    },
+                    filters: {
+                        path: 'active',
+                        operator: 'EQ',
+                        value1: true
+                    }
+                }">
+                <core:ListItem key="{code}" text="{path: 'code', formatter: '.formatCountry'}"/>
+            </ComboBox>
+            <Label
+                id="industryLabel"
+                text="{i18n>industry}"
+            />
+            <ComboBox id="comboBoxIndustryCustomerCreate"
+                name="industryCode"
+                placeholder="{i18n>industry}"
+                selectedKey="{customerCreateModel>/industryCode_ID}"
+                items="{
+                    path : '/IndustryCodes',
+                    length : '1000',
+                    sorter : {
+                        path : 'code',
+                        descending : false
+                    }
+                }">
+                <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${description}}"/>
+            </ComboBox>
+            <Label
+                id="salesOrgLabel"
+                text="{i18n>salesOrg}"
+                required="true"
+            />
+            <ComboBox id="comboBoxSalesOrgCustomerCreate"
+                name="saleOrgCode"
+                placeholder="{i18n>salesOrg}"
+                items="{
+                    path: '/SalesOrgs',
+                    templateShareable: true,
+                    sorter: { path: 'code' }
+                }"
+                showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
+                selectedKey="{
+                        path: 'customerCreateModel>/salesOrg_ID', 
+                        type: 'sap.ui.model.type.String',
+                        constraints: {
+                            minLength: 1
+                        }
+                }"
+            >
+                <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${brand}}" additionalText="{description}"/>
+            </ComboBox>
+            <Label
+                id="frameContractNumberLabel"
+                text="{i18n>frameContractNumber}"
+            />
+            <Input
+                id="frameContractNumberInput"
+                value="{
+                            path: 'customerCreateModel>/frameContractNumber'
+                        }"
+            />
+            <Label
+                id="kionCustomerNoLabel"
+                text="{i18n>kionCustomerNo}"
+            />
+            <Input
+                id="kionCustomerNoInput"
+                value="{
+                            path: 'customerCreateModel>/kionCustomerNo'
+                        }"
+            />
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="customerCreateFooter">
+                <Button
+                    id="CreateCustomerMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="customerCreateToolbarSpacer" />
+                <Button
+                    id="saveButtonCustomer"
+                    text="{
+                        parts: [
+                            'customerCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onEntityDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeCustomerDialogButton"
+                    text="{i18n>close}"
+                    press=".onDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

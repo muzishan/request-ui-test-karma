@@ -1,0 +1,198 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="batteryChargerDiscountDialog"
+        title="{
+                    parts: [
+                        'batteryChargerDiscountCreateModel>/isEdit',
+                        'batteryChargerDiscountCreateModel>/batteryCharger/code',
+                        'i18n>batteryChargerDiscountDialogAdd',
+                        'i18n>batteryChargerDiscountDialogUpdate'
+                    ],
+                    formatter: '.formatter.formatDialogTitle'
+                }"
+        verticalScrolling="true"
+        contentWidth="800px"
+    >
+        <l:SimpleForm
+            id="simpleFormBatteryChargerDiscount"
+            editable="true"
+            labelSpanXL="5"  
+            labelSpanL="5"   
+            labelSpanM="3"    
+            labelSpanS="5"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <Label
+                id="categoryBatteryChargerDiscountDialogLabel"
+                text="{i18n>category}"
+            />
+            <RadioButtonGroup id="categoryBatteryChargerDiscountDialogCheckbox" 
+                  selectedIndex="{= ${batteryChargerDiscountCreateModel>/category} === 'BATTERY' ? 0 : 1 }" 
+                  select="onRadioButtonSelect"
+                  columns="2">
+                <RadioButton id="batteryDiscountRadioButton" text="BATTERY" />
+                <RadioButton id="chargerDiscountRadioButton" text="CHARGER" />
+            </RadioButtonGroup>
+            <Label
+                id="codeBatteryChargerDiscountDialogLabel"
+                text="{i18n>code}"
+            />
+            <ComboBox id="comboBoxBatteryCharger"
+                name="batteryChargerCode"
+                required="true"
+                items="{
+                    path: '/BatteryChargers',
+                    templateShareable: true,
+                    sorter: { path: 'code' },
+                    length : '1000',
+                    filters: [{
+                        path: 'category',
+                        operator: 'EQ',
+                        value1: 'BATTERY'
+                    },{
+                        path: 'active',
+                        operator: 'EQ',
+                        value1: 'true'
+                    }]
+                }"
+                showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
+                selectedKey="{
+                    path: 'batteryChargerDiscountCreateModel>/batteryCharger_ID',
+                    type: 'sap.ui.model.type.String',
+                    constraints: {
+                        minLength: 1
+                    }
+                }"
+            >
+                <core:ListItem key="{ID}" text="{code} - {brand}" additionalText="{description}"/>
+            </ComboBox>
+            <Label
+                id="seriesBatteryChargerDiscountDialogLabel"
+                text="{i18n>series}"
+            />
+            <ComboBox id="comboBoxSeries"
+                name="series"
+                visible="{= ${batteryChargerDiscountCreateModel>/category} === 'BATTERY' }"
+                items="{
+                    path: '/Series',
+                    templateShareable: true,
+                    sorter: { path: 'code' },
+                    length : '1000'
+                }"
+                showSecondaryValues= "true"
+                selectedKey="{
+                    path: 'batteryChargerDiscountCreateModel>/series_ID',
+                    type: 'sap.ui.model.type.String',
+                    constraints: {
+                        minLength: 1
+                    }
+                }"
+            >
+                <core:ListItem key="{ID}" text="{code} - {brand}" additionalText="{description}"/>
+            </ComboBox>
+            <Label
+                id="validFromBatteryChargerDiscountDialogLabel"
+                text="{i18n>validFrom}"
+            />
+            <DatePicker 
+                id="datePickerValidFromBatteryChargerDiscount"
+                valueFormat="yyyy-MM-dd"
+                change=".liveCheckFormValidation"
+                value="{
+                    path : 'batteryChargerDiscountCreateModel>/validFrom',
+                    type : 'sap.ui.model.type.Date',
+                    constraints: {
+                        minimum: 1
+                    },
+                    formatOptions: {
+                        pattern: 'MMM dd, yyyy'
+                    }
+                }"
+                required="true"/>
+            <Label
+                id="discountBatteryChargerDiscountDialogLabel"
+                text="{i18n>discount}"
+            />
+            <Input 
+                id="discountBatteryChargerDiscountDialogInput"
+                placeholder="{i18n>enterDiscount}"
+                required="true"
+                autocomplete="false"
+                valueStateText="{i18n>invalidDiscount}"
+                type="Number"
+                change=".liveCheckFormValidation"
+                value="{
+                    path: 'batteryChargerDiscountCreateModel>/discount',
+                    type: 'sap.ui.model.type.String',
+                    constraints: {
+                        minLength: 1
+                    }
+                }"
+            />
+            <Label
+                id="salesOrgBatteryChargerDiscountDialogLabel"
+                text="{i18n>salesOrg}"
+            />
+            <ComboBox id="comboBoxSalesOrg"
+                name="saleOrgCode"
+                required="true"
+                items="{
+                    path: '/SalesOrgs',
+                    templateShareable: true,
+                    sorter: { path: 'code' }
+                }"
+                showSecondaryValues= "true"
+                selectionChange='.liveCheckFormValidation'
+                selectedKey="{
+                    path: 'batteryChargerDiscountCreateModel>/salesOrg_ID',
+                    type: 'sap.ui.model.type.String',
+                    constraints: {
+                        minLength: 1
+                    }
+                }"
+            >
+                <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${brand}}" additionalText="{description}"/>
+            </ComboBox>
+        </l:SimpleForm>
+        <footer>
+            <OverflowToolbar id="discountDialogFooter">
+                <Button
+                    id="batteryChargerDiscountDialogMsgBtn"
+                    visible="{= !!${message>/}.length}"
+                    icon="sap-icon://error"
+                    type="Negative"
+                    text="{= ${message>/}.length}"
+                    press=".handleMessagePopoverPress"
+                    ariaHasPopup="Dialog"
+                />
+                <ToolbarSpacer id="batteryChargerDiscountDialogToolbarSpacer" />
+                <Button
+                    id="saveButtonBatteryChargerDiscount"
+                    text="{
+                        parts: [
+                            'batteryChargerDiscountCreateModel>/isEdit',
+                            'i18n>save',
+                            'i18n>update'
+                        ],
+                        formatter: '.formatter.saveButtonText'
+                    }"
+                    press=".onEntityDialogSavePress"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                />
+                <Button
+                    id="closeBatteryChargerDiscountDialogButton"
+                    text="{i18n>close}"
+                    press=".onDialogClosePress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

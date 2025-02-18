@@ -1,0 +1,42 @@
+{
+  "name": "productmanagement",
+  "version": "0.0.1",
+  "description": "Dashboard for manage product",
+  "keywords": [
+    "ui5",
+    "openui5",
+    "sapui5"
+  ],
+  "main": "webapp/index.html",
+  "devDependencies": {
+    "@sap-ux/ui5-middleware-fe-mockserver": "2",
+    "@sap/ui5-builder-webide-extension": "^1.1.9",
+    "@sap/ux-ui5-tooling": "1",
+    "@ui5/cli": "^3.0.0",
+    "karma": "^6.4.4",
+    "karma-coverage": "^2.2.1",
+    "karma-firefox-launcher": "^2.1.3",
+    "karma-chrome-launcher": "^2.1.3",
+    "karma-qunit": "^4.2.1",
+    "karma-sonarqube-reporter": "^1.4.0",
+    "karma-ui5": "^4.0.1",
+    "mbt": "^1.2.27",
+    "sonarqube-scanner": "^4.2.6",
+    "ui5-task-zipper": "^3.1.3"
+  },
+  "scripts": {
+    "start": "echo \\\"This application was generated with a local metadata file and does not reference a live server. Please add the required server configuration or start this application with mock data using the target: npm run start-mock\\\"",
+    "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#comkionsdruiproductmanagement-display\"",
+    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
+    "deploy": "fiori verify",
+    "deploy-config": "fiori add deploy-config",
+    "start-noflp": "echo \\\"This application was generated with a local metadata file and does not reference a live server. Please add the required server configuration or start this application with mock data using the target: npm run start-mock\\\"",
+    "start-mock": "fiori run --config ./ui5-mock.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#comkionsdruiproductmanagement-display\"",
+    "start-variants-management": "echo \\\"This application was generated with a local metadata file and does not reference a live server. Please add the required server configuration or start this application with mock data using the target: npm run start-mock\\\"",
+    "unit-tests": "fiori run --config ./ui5-mock.yaml --open 'test/unit/unitTests.qunit.html'",
+    "int-tests": "fiori run --config ./ui5-mock.yaml --open 'test/integration/opaTests.qunit.html'",
+    "build:cf": "ui5 build preload --clean-dest --config ui5-deploy.yaml --include-task=generateCachebusterInfo",
+    "karma": "npm install && karma start"
+  },
+  "sapuxLayer": "CUSTOMER_BASE"
+}

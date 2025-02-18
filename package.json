@@ -1,0 +1,32 @@
+{
+  "name": "mta-project",
+  "version": "0.0.1",
+  "description": "Build and deployment scripts",
+  "scripts": {
+    "clean": "rimraf resources mta_archives mta-op*",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "undeploy": "cf undeploy special-discount-request-ui --delete-services --delete-service-keys --delete-service-brokers",
+    "lint:js": "eslint ./",
+    "lint:style": "npx stylelint **/*.css",
+    "lint": "npm run lint:js && npm run lint:style",
+    "lint:fix": "eslint ./ --fix && npx stylelint **/*.css --fix",
+    "start:approuter": "cds bind --exec -- npm start --prefix approuter",
+    "test": "cd productmanagement && npm run karma"
+  },
+  "devDependencies": {
+    "mbt": "^1.2.27",
+    "rimraf": "^5.0.5",
+    "@eslint/compat": "^1.1.1",
+    "@eslint/js": "^9.9.1",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
+    "pre-commit": "^1.2.2",
+    "stylelint": "^16.9.0",
+    "stylelint-config-standard": "^36.0.1",
+    "@sap/cds-dk": "^7.9.2"
+  },
+  "pre-commit": [
+    "lint:fix"
+  ]
+}

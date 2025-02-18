@@ -1,0 +1,93 @@
+sap.ui.define([
+    "sap/m/MessageBox",
+    "sap/ui/core/BusyIndicator"
+], function (MessageBox, BusyIndicator) {
+    "use strict";
+    return {
+        initInterceptor: function () {
+            $(document).ajaxStart(function(){
+                 BusyIndicator.show(0);
+            });
+            $(document).ajaxComplete(function() {
+                 BusyIndicator.hide();
+            });
+            $(document).ajaxError(function(event, xhr, options) {
+                MessageBox.error(xhr.responseJSON?.error?.message);
+            });
+        },
+        getHost: function (oController) {
+            return oController.getView().getModel().sServiceUrl.split('/v4/')[0];
+        },
+        fetchData: function (oController, sUrl) {
+            sUrl = this.getHost(oController) + sUrl;
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: sUrl,
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
+        uploadBatteryChargerDiscounts(oController, oData) {
+            const sUrl = this.getHost(oController) + "/v4/batteryChargerDiscounts-service/uploadBatteryChargerDiscounts";
+            const json = JSON.stringify({batteryChargerDiscounts : oData});
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    async: true,
+                    url: sUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: json,
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
+        uploadCustomers(oController, oData) {
+            const sUrl = this.getHost(oController) + "/v4/master-data-service/uploadCustomers";
+            const json = JSON.stringify({customers: oData});
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    async: true,
+                    url: sUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: json,
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
+        getCurrentUser: function (oController) {
+            const host = oController.getView().getModel().sServiceUrl.split('/v4/')[0];
+            const sUrl = host + "/v4/user-service/getCurrentUser()";
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: sUrl,
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (oResult) {
+                        resolve(oResult);
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        }
+    };
+});

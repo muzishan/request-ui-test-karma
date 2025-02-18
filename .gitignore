@@ -1,0 +1,15 @@
+/mta_archives/
+/node_modules/
+*/node_modules/
+/resources/
+/.scannerwork/
+*/reports/
+*/dist/
+
+
+### VS Code ###
+.vscode/
+
+### Karma ###
+coverage/
+.env

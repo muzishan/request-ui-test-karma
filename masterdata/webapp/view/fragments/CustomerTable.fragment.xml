@@ -1,0 +1,352 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+<Table
+    id="tableCustomer"
+    visible="false"
+    inset="false"
+    items="{
+        path:'/Customers',
+        parameters: {
+            $expand: 'salesOrg,industryCode,country',
+            $select: 'salesOrg_ID,industryCode_ID',
+            $count: true
+        },
+        sorter: {
+            path: 'customerNo,name1',
+            descending: false
+        },
+        events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}
+    }"
+    growingThreshold="100"
+    growing="true"
+    mode="None"
+    selectionChange=".onSelectionChange"
+    >
+    <headerToolbar>
+    <OverflowToolbar id="otbSubHeaderCustomer">
+        <ToolbarSpacer id="_IDGenToolbarSpacerCustomer"/>
+        <Button 
+                id="refreshButtonCustomer" 
+                tooltip="refresh" 
+                icon="sap-icon://refresh" 
+                press=".onRefreshButtonPressed"
+            />
+            <Button
+                id="addButtonCustomer"
+                icon="sap-icon://add"
+                press=".onPressCreateButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button
+                id="importCustomer"
+                text="{i18n>import}"
+                icon="sap-icon://excel-attachment"
+                press=".onPressImportButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button
+                id="exportButtonCustomer"
+                text="{i18n>export}"
+                icon="sap-icon://excel-attachment"
+                press=".onPressCustomerExportButton"
+            />
+            <Button 
+                id="clearFiltersCustomer" 
+                tooltip="Clear" 
+                icon="sap-icon://clear-filter" 
+                press=".onClearFilters"
+            />
+    </OverflowToolbar>
+    </headerToolbar>
+    <columns>
+        <Column
+            id="columnCategoryCustomer"
+            demandPopin="true"
+        >
+            <VBox id="customerNoCustomerFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                <HBox id="customerNoCustomerFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                    <Text
+                        id="txtCustomerNoCustomerColumn"
+                        text="{i18n>customerNo}"
+                    />
+                </HBox>
+                <Input id="customerNoCustomerFilterInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnAdditionalCustomerNoCustomer"
+            demandPopin="true"
+        >
+            <VBox id="additionalCustomerNoFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="additionalCustomerNoFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="additionalCustomerNoColumn"
+                            text="{i18n>additionalCustomerNo}"
+                        />
+                    </HBox>
+                <Input id="additionalCustomerNoFilterInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnName1Customer"
+            demandPopin="true"
+        >
+            <VBox id="name1CustomerFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="name1CustomerFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtName1CustomerColumn"
+                            text="{i18n>name1}"
+                        />
+                    </HBox>
+                <Input id="name1CustomerFilterInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnName2Customer"
+            demandPopin="true"
+        >
+            <VBox id="name2CustomerFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="name2CustomerFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtName2CustomerColumn"
+                            text="{i18n>name2}"
+                        />
+                    </HBox>
+                <Input id="name2CustomerFilterInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnStreet"
+            demandPopin="true"
+        >
+            <VBox id="streetFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="streetFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="streetColumn"
+                            text="{i18n>street}"
+                        />
+                    </HBox>
+                <Input id="streetFilterInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnPostCode"
+            demandPopin="true"
+        >
+            <VBox id="postCodeFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="postCodeFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="postCodeColumn"
+                            text="{i18n>postCode}"
+                        />
+                    </HBox>
+                <Input id="postCodeFilterInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnLocation"
+            demandPopin="true"
+        >
+            <VBox id="locationFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="locationFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="locationColumn"
+                            text="{i18n>location}"
+                        />
+                    </HBox>
+                <Input id="locationFilterInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnCountryCustomer"
+            demandPopin="true"
+        >
+            <VBox id="countryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="countryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="countryColumn"
+                            text="{i18n>country}"
+                        />
+                    </HBox>
+                    <MultiComboBox
+                        id="countryCustomerSelect"
+                        showClearIcon="true"
+                        selectionChange=".onSearch" 
+                        width="100%"
+                        items="{
+                            path: '/SdrCountries',
+                            templateShareable: true,
+                            length : '1000',
+                            sorter: { path: 'code' }
+                        }"
+                        showSecondaryValues= "true"
+                    >
+                        <core:ListItem key="{code}" text="{path: 'code', formatter: '.formatCountry'}"/>
+                    </MultiComboBox>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnIndustryCodeCustomer"
+            demandPopin="true"
+        >
+            <VBox id="industryFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="industryFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="industryCodeColumn"
+                            text="{i18n>industry}"
+                        />
+                    </HBox>
+                    <MultiComboBox
+                        id="industryCustomerSelect"
+                        showClearIcon="true"
+                        selectionChange=".onSearch" 
+                        width="100%"
+                        items="{
+                            path: '/IndustryCodes',
+                            length : '1000',
+                            templateShareable: true,
+                            sorter: { path: 'code' }
+                        }"
+                        showSecondaryValues= "true"
+                    >
+                        <core:ListItem key="{ID}" text="{code}" additionalText="{description}"/>
+                    </MultiComboBox>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnSalesOrgCustomer"
+            demandPopin="true"
+        >
+            <VBox id="salesOrgCustomerFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="salesOrgCustomerFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="salesOrgCustomerColumn"
+                            text="{i18n>salesOrg}"
+                        />
+                    </HBox>
+                    <MultiComboBox
+                        id="salesOrgCustomerSelect"
+                        showClearIcon="true"
+                        selectionChange=".onSearch" 
+                        width="100%"
+                        items="{
+                            path: '/SalesOrgs',
+                            templateShareable: true,
+                            sorter: { path: 'code' }
+                        }"
+                        showSecondaryValues= "true"
+                    >
+                        <core:ListItem key="{ID}" text="{= ${code} + ' ' + ${brand}}" additionalText="{description}"/>
+                    </MultiComboBox>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnFrameContractNumber"
+            demandPopin="true"
+        >
+            <VBox id="frameContractNumberFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="frameContractNumberFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="frameContractNumberColumn"
+                            text="{i18n>frameContractNumber}"
+                        />
+                    </HBox>
+                <Input id="frameContractNumberFilterInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnKionCustomerNoCustomer"
+            demandPopin="true"
+        >
+            <VBox id="kionCustomerNoFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="kionCustomerNoFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtKionCustomerNoColumn"
+                            text="{i18n>kionCustomerNo}"
+                        />
+                    </HBox>
+                <Input id="kionCustomerNoFilterInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnOperationsCustomer"
+            demandPopin="true"
+        >
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem
+            id="columnListItemTableCustomer"
+            vAlign="Middle"
+        >
+            <cells>
+                <Text
+                    id="txtCustomerNoCustomer"
+                    text="{customerNo}"
+                />
+                <Text
+                    id="txtAdditionalCustomerNoCustomer"
+                    text="{additionalCustomerNo}"
+                />
+                <Text
+                    id="txtName1Customer"
+                    text="{name1}"
+                />
+                <Text
+                    id="txtName2Customer"
+                    text="{name2}"
+                />
+                <Text
+                    id="txtStreetCustomer"
+                    text="{street}"
+                />
+                <Text
+                    id="txtPostCodeCustomer"
+                    text="{postCode}"
+                />
+                <Text
+                    id="txtLocationCustomer"
+                    text="{location}"
+                />
+                <Text
+                    id="txtCountryCustomer"
+                    text="{path: 'country_code', formatter: '.formatCountry'}"
+                />
+                <ObjectIdentifier
+                    id="txtIndustryCodeCustomer"
+                     title="{industryCode/code}"
+                    text="{industryCode/description}"
+                />
+                <ObjectIdentifier
+                    id="txtSalesOrgCustomer"
+                    title="{= ${salesOrg/code} + ' ' + ${salesOrg/brand}}"
+                    text="{salesOrg/description}"
+                />
+                <Text
+                    id="txtFrameContractNumberCustomer"
+                    text="{frameContractNumber}"
+                />
+                <Text
+                    id="txtKionCustomerNoCustomer"
+                    text="{kionCustomerNo}"
+                />
+                <Toolbar id="toolbarCustomer" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                    <Button
+                        id="editButtonCustomer"
+                        icon="sap-icon://edit-outside"
+                        press=".onPressEditButton"
+                    />
+                    <Button
+                        id="deleteOperationsButtonCustomer"
+                        icon="sap-icon://delete"
+                        press=".onPressDeleteButton"
+                    />
+                </Toolbar>
+            </cells>
+        </ColumnListItem>
+    </items>
+    </Table>
+</core:FragmentDefinition>

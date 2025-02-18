@@ -1,0 +1,209 @@
+<mvc:View controllerName="com.kion.sdr.ui.productmanagement.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar">
+    <f:DynamicPage
+        id="dynamicPage"
+        headerExpanded="true"
+    >
+        <f:title>
+            <f:DynamicPageTitle id="dynamicPageTitle">
+                <f:heading>
+                    <Title
+                        id="mainTitle"
+                        text="{i18n>title}"
+                    />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <Table
+                id="tableProducts"
+                inset="false"
+                items="{
+                    path: '/ProductCodes',
+                    sorter: { path: 'productCode'},
+                    parameters : {
+                        $count: true,
+                        $expand: 'seriesRef'
+                    },
+                    events: { createCompleted: '.createProductCompleted', patchCompleted: '.patchProductCompleted'}
+                }"
+                growingThreshold="100"
+                growing="true"
+                mode="{= ${currentUserModel>/isAdmin} ? 'MultiSelect' : 'None'}"
+                selectionChange=".onSelectionChange"
+            >
+                <headerToolbar>
+                    <OverflowToolbar id="otbSubheader">
+                        <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                        <Button 
+                            id="refreshButton" 
+                            tooltip="refresh" 
+                            icon="sap-icon://refresh" 
+                            press=".onRefreshButtonPressed"
+                        />
+                        <Button
+                            id="addButton"
+                            icon="sap-icon://add"
+                            press=".onPressCreateButton"
+                            visible="{= ${currentUserModel>/isAdmin}}"
+                        />
+                        <Button 
+                            id="clearFilters" 
+                            tooltip="Clear" 
+                            icon="sap-icon://clear-filter" 
+                            press=".onReset"
+                        />
+                        <Button
+                            id="deleteButton"
+                            icon="sap-icon://delete"
+                            press=".onPressBulkDeleteButton"
+                            visible="false"
+                        />
+                        <Button 
+                            id="exportProducts" 
+                            icon="sap-icon://excel-attachment"
+                            text="{i18n>export}"
+                            press="onExcelExport" 
+                            tooltip="Download Products to excel"
+                        />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column
+                        id="columnSeries"
+                        demandPopin="true"
+                    >
+                        <VBox id="seriesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                                <HBox id="seriesFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                                    <Text
+                                        id="txtSeriesColumn"
+                                        text="{i18n>series}"
+                                    />
+                                </HBox>
+                            <Input id="seriesInput" change=".onSearch" width="100%" />
+                        </VBox>
+                    </Column>
+                    <Column
+                        id="columnProductCode"
+                        demandPopin="true"
+                    >
+                        <VBox id="productCodesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                                <HBox id="productCodesFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                                    <Text
+                                        id="txtProductCodeColumn"
+                                        text="{i18n>productCode}"
+                                    />
+                                </HBox>
+                            <Input id="productCodesInput" change=".onSearch" width="100%" />
+                        </VBox>
+                    </Column>
+                    <Column
+                        id="columnDescription"
+                        demandPopin="true"
+                    >
+                        <VBox id="productCodesDescFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                                <HBox id="productCodesDescFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                                    <Text
+                                        id="txtDescriptionColumn"
+                                        text="{i18n>description}"
+                                    />
+                                </HBox>
+                            <Input id="productCodesDescInput" change=".onSearch" width="100%" />
+                        </VBox>
+                    </Column>
+                    <Column
+                        id="columnBrand"
+                        demandPopin="true"
+                    >
+                        <VBox id="brandFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                                <HBox id="brandFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                                    <Text
+                                        id="txtBrandColumn"
+                                        text="{i18n>brand}"
+                                    />
+                                </HBox>
+                            <Select id="brandInput" change=".onSearch" width="100%" >
+                            <items>
+                                <core:Item id="_IDGenItem7" key="" text="{i18n>all}" />
+                                <core:Item id="_IDGenItem8" key="LMH" text="{i18n>lmh}" />
+                                <core:Item id="_IDGenItem9" key="STILL" text="{i18n>still}" />
+                            </items>
+                            </Select>
+                        </VBox>
+                    </Column>
+                    <Column
+                        id="columnIsActive"
+                        demandPopin="true"
+                    >
+                        <VBox id="statusFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                                <HBox id="statusFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                                    <Text
+                                        id="txtIsActiveColumn"
+                                        text="{i18n>isActive}"
+                                    />
+                                </HBox>
+                            <Select id="statusSelect" change=".onSearch" width="100%">
+                            <items>
+                                <core:Item id="_IDGenItem4" key="" text="{i18n>all}" />
+                                <core:Item id="_IDGenItem5" key="true" text="{i18n>active}" />
+                                <core:Item id="_IDGenItem6" key="false" text="{i18n>inactive}" />
+                            </items>
+                            </Select>
+                        </VBox> 
+                    </Column>
+                    <Column
+                        id="columnOperations"
+                        demandPopin="true"
+                    >
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem
+                        id="columnListItemTable"
+                        vAlign="Middle"
+                    >
+                        <cells>
+                            <ObjectIdentifier
+                                id="txtSeries"
+                                title="{series}"
+                                text="{seriesRef/description}"
+                            />
+                            <Text
+                                id="txtProductCode"
+                                text="{productCode}"
+                            />
+                            <Text
+                                id="txtDescription"
+                                text="{description}"
+                            />
+                            <Text
+                                id="txtBrand"
+                                text="{brand}"
+                            />
+                            <Text
+                                id="txtIsActive"
+                                text="{path : 'active', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatStatus'}"
+                            />
+                            <Toolbar id="Toolbar" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                                <Button
+                                    id="editButton"
+                                    icon="sap-icon://edit-outside"
+                                    press=".onPressEditButton"
+                                />
+                                <Button
+                                    id="deleteOperationsButton"
+                                    icon="sap-icon://delete"
+                                    press=".onPressDeleteButton"
+                                />
+                            </Toolbar>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

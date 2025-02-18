@@ -1,0 +1,253 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+<Table
+    id="tableBatteryChargerDiscount"
+    visible="false"
+    inset="false"
+    items="{
+        path:'batteryChargerDiscountModel>/BatteryChargerDiscounts',
+        parameters: {
+            $expand: 'batteryCharger,series,salesOrg',
+            $select: 'category,validFrom,discount,batteryCharger_ID,series_ID,salesOrg_ID'
+        },
+        sorter: {
+            path: 'category,batteryCharger/code,series/code,validFrom desc,salesOrg/code',
+            descending: false
+        },
+        events: { createCompleted: '.createCompleted', patchCompleted: '.patchCompleted'}
+    }"
+    growingThreshold="100"
+    growing="true"
+    mode="None"
+    selectionChange=".onSelectionChange"
+    >
+    <headerToolbar>
+    <OverflowToolbar id="otbSubHeaderBatteryChargerDiscount">
+        <ToolbarSpacer id="_IDGenToolbarSpacerBatteryChargerDiscount"/>
+        <Button 
+                id="refreshButtonBatteryChargerDiscount" 
+                tooltip="refresh" 
+                icon="sap-icon://refresh" 
+                press=".onRefreshButtonPressed"
+            />
+            <Button
+                id="addButtonBatteryChargerDiscount"
+                icon="sap-icon://add"
+                press=".onPressCreateButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button
+                id="importButtonBatteryChargerDiscount"
+                text="{i18n>import}"
+                icon="sap-icon://excel-attachment"
+                press=".onPressImportButton"
+                visible="{= ${currentUserModel>/isAdmin}}"
+            />
+            <Button
+                id="exportButtonBatteryChargerDiscount"
+                text="{i18n>export}"
+                icon="sap-icon://excel-attachment"
+                press=".onPressBatteryChargerDiscountExportButton"
+            />
+            <Button 
+                id="clearFiltersBatteryChargerDiscount" 
+                tooltip="Clear" 
+                icon="sap-icon://clear-filter" 
+                press=".onClearFilters"
+            />
+    </OverflowToolbar>
+    </headerToolbar>
+    <columns>
+        <Column
+            id="columnCategoryDiscount"
+            demandPopin="true"
+        >
+            <VBox id="categoryDiscountFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="categoryDiscountFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtCategoryDiscountColumn"
+                            text="{i18n>category}"
+                        />
+                    </HBox>
+                <Select id="categoryDiscountSelect" change=".onSearch" width="100%">
+                <items>
+                    <core:Item id="_IDGenItemDiscount1" key="" text="{i18n>all}" />
+                    <core:Item id="_IDGenItemDiscount2" key="BATTERY" text="BATTERY" />
+                    <core:Item id="_IDGenItemDiscount3" key="CHARGER" text="CHARGER" />
+                </items>
+                </Select>
+            </VBox>
+        </Column>
+        <Column
+            id="columnCodeDiscount"
+            demandPopin="true"
+        >
+            <VBox id="codeDiscountFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="codeDiscountFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtCodeDiscountColumn"
+                            text="{i18n>code}"
+                        />
+                    </HBox>
+                <Input id="codeDiscountInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+        <Column
+            id="columnDiscountSeries"
+            demandPopin="true"
+        >
+            <VBox id="discountSeriesFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="discountSeriesFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtDiscountSeriesColumn"
+                            text="{i18n>series}"
+                        />
+                    </HBox>
+                <Input id="seriesDiscountInput" change=".onSearch" width="100%" />
+            </VBox>
+        </Column>
+         <Column
+            id="columnBrandDicount"
+            demandPopin="true"
+        >
+            <VBox id="brandDiscountFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="brandDiscountFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="txtBrandDiscountColumn"
+                            text="{i18n>brand}"
+                        />
+                    </HBox>
+                <Select id="brandDiscountSelect" change=".onSearch" width="100%">
+                <items>
+                    <core:Item id="_IDGenItemBrandDiscount1" key="" text="{i18n>all}" />
+                    <core:Item id="_IDGenItemBrandDiscount2" key="LMH" text="{i18n>lmh}" />
+                    <core:Item id="_IDGenItemBrandDiscount3" key="STILL" text="{i18n>still}" />
+                </items>
+                </Select>
+            </VBox>
+        </Column>
+        <Column
+            id="columnValidFromDiscount"
+            demandPopin="true"
+        >
+            <VBox id="validFromFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="validFromFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="validFromColumn"
+                            text="{i18n>validFrom}"
+                        />
+                    </HBox>
+                <DatePicker id="validFromInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnDiscount"
+            demandPopin="true"
+        >
+            <VBox id="discountFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="discountFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="discountColumn"
+                            text="{i18n>discount}"
+                        />
+                    </HBox>
+                <Input id="discountInput" change=".onSearch" width="100%" />
+            </VBox> 
+        </Column>
+        <Column
+            id="columnSalesOrgDiscount"
+            demandPopin="true"
+        >
+            <VBox id="salesOrgFilterVBox" justifyContent="Start" alignItems="Stretch" width="100%" >
+                    <HBox id="salesOrgFilterHBox" alignItems="Center" class="sapUiTinyMarginBottom" height="32px">
+                        <Text
+                            id="salesOrgColumn"
+                            text="{i18n>salesOrg}"
+                        />
+                    </HBox>
+                    <MultiComboBox
+                        id="salesOrgDiscountSelect"
+                        showClearIcon="true"
+                        selectionChange=".onSearch" 
+                        width="100%"
+                        items="{
+                            path: '/SalesOrgs',
+                            templateShareable: true,
+                            sorter: { path: 'code' }
+                        }"
+                        showSecondaryValues= "true"
+                    >
+                        <core:ListItem key="{code}" text="{= ${code} + ' ' + ${brand}}" additionalText="{description}"/>
+                    </MultiComboBox>
+            </VBox> 
+        </Column>
+        <Column
+            id="columnOperationsBatteryChargerDiscount"
+            demandPopin="true"
+        >
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem
+            id="columnListItemTableBatteryChargerDiscount"
+            vAlign="Middle"
+        >
+            <cells>
+                <Text
+                    id="txtCategoryDiscount"
+                    text="{batteryChargerDiscountModel>category}"
+                />
+                <ObjectIdentifier
+                    id="txtCodeDiscount"
+                    title="{batteryChargerDiscountModel>batteryCharger/code}"
+                    text="{batteryChargerDiscountModel>batteryCharger/description}"
+                />
+                <ObjectIdentifier
+                    id="txtSeriesDiscount"
+                    title="{batteryChargerDiscountModel>series/code}"
+                    text="{batteryChargerDiscountModel>series/description}"
+                />
+                <Text 
+                    id="txtBrandDiscount"
+                    text="{batteryChargerDiscountModel>batteryCharger/brand}"
+                />
+                <Text
+                    id="txtValidFromDiscount"
+                    text="{batteryChargerDiscountModel>validFrom}"
+                />
+                <Text
+                    id="txtDiscount"
+                    text="{
+                        path: 'batteryChargerDiscountModel>discount',
+                        type: 'sap.ui.model.type.Float',
+                        formatOptions: {
+                        minFractionDigits: 2,
+                        maxFractionDigits: 2
+                        }
+                    }"
+                />
+                <ObjectIdentifier
+                    id="txtSalesOrgDiscount"
+                    title="{batteryChargerDiscountModel>salesOrg/code}"
+                    text="{batteryChargerDiscountModel>salesOrg/description}"
+                />
+                <Toolbar id="toolbarBatteryChargerDiscount" class="customToolbar" visible="{= ${currentUserModel>/isAdmin}}">
+                    <Button
+                        id="editButtonBatteryChargerDiscount"
+                        icon="sap-icon://edit-outside"
+                        press=".onPressEditButton"
+                    />
+                    <Button
+                        id="deleteOperationsButtonBatteryChargerDiscount"
+                        icon="sap-icon://delete"
+                        press=".onPressDeleteButton"
+                    />
+                </Toolbar>
+            </cells>
+        </ColumnListItem>
+    </items>
+    </Table>
+</core:FragmentDefinition>
