@@ -7,7 +7,7 @@ node('built-in') {
         tag = env.BRANCH_NAME.replace("/", "-").substring(0, Math.min(env.BRANCH_NAME.length(), 56)) + "-" + "${scmVars.GIT_COMMIT.substring(0, 6)}"
     }
 
-    nodejs(configId: 'npm-config', nodeJSInstallationName: nodeVersion) {
+    nodejs(nodeJSInstallationName: nodeVersion) {
         stage('Build') {
             sh 'npm config fix'
             sh 'npm ci'
