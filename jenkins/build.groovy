@@ -1,4 +1,4 @@
-node('buildAgent') {
+node('Built-In Node') {
     def nodeVersion = 'node-20.16.0'
 
     stage('Checkout') {
