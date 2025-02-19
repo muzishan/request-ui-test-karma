@@ -1,4 +1,4 @@
-pipeline {
+node('built-in') {
     def nodeVersion = 'node-20.16.0'
 
     stage('Checkout') {
@@ -17,22 +17,12 @@ pipeline {
         stage('Lint') {
             sh 'npm run lint'
         }
-    }
 
-    stage('Test') {
-        agent {
-            docker {
-                image 'zenika/alpine-chrome'
-                // Run the container on the node specified at the
-                // top-level of the Pipeline, in the same workspace,
-                // rather than on a new node entirely:
-                reuseNode true
-            }
-        }
-        steps {
-            script {
+        stage('Test') {
+            docker.image('zenika/alpine-chrome').inside {
                 sh 'npm run test'
             }
+            
         }
     }
 
