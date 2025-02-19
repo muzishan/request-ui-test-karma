@@ -29,7 +29,9 @@ node('built-in') {
                 }
             }
             steps {
-                sh 'npm run test'
+                script {
+                    sh 'npm run test'
+                }
             }
         }
     }
