@@ -1,4 +1,4 @@
-node('buildAgent') {
+node('built-in') {
     def nodeVersion = 'node-20.16.0'
 
     stage('Checkout') {
@@ -7,7 +7,7 @@ node('buildAgent') {
         tag = env.BRANCH_NAME.replace("/", "-").substring(0, Math.min(env.BRANCH_NAME.length(), 56)) + "-" + "${scmVars.GIT_COMMIT.substring(0, 6)}"
     }
 
-    nodejs(configId: 'npmrc9_noproxy_advanced', nodeJSInstallationName: nodeVersion) {
+    nodejs(nodeJSInstallationName: nodeVersion) {
         stage('Build') {
             sh 'npm config fix'
             sh 'npm ci'
@@ -19,12 +19,17 @@ node('buildAgent') {
         }
 
         stage('Test') {
-            sh 'npm run test'
+            docker.image('zenika/alpine-chrome:with-node').inside("""--entrypoint=''""") {
+                sh 'npm run test'
+            }
+            
+        }
+
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'SonarScanner';
+            withSonarQubeEnv() {
+            sh "${scannerHome}/bin/sonar-scanner"
+            }
         }
     }
-
-    npmSonarV2 nodeVersion: nodeVersion,
-        sonarServer: 'sonar-server',
-        checkQualityGate: true
-
 }

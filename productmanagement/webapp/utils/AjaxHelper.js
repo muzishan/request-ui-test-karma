@@ -1,7 +1,7 @@
 sap.ui.define([
-    "sap/m/MessageBox",
+    "sap/m/MessageToast",
     "sap/ui/core/BusyIndicator"
-], function (MessageBox, BusyIndicator) {
+], function (MessageToast, BusyIndicator) {
     "use strict";
     return {
         initInterceptor: function () {
@@ -12,7 +12,7 @@ sap.ui.define([
                  BusyIndicator.hide();
             });
             $(document).ajaxError(function(event, xhr, options) {
-                MessageBox.error(xhr.responseJSON?.error?.message);
+                MessageToast.show(xhr.responseJSON?.error?.message);
             });
         },
 
