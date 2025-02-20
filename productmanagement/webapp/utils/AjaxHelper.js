@@ -12,7 +12,7 @@ sap.ui.define([
                  BusyIndicator.hide();
             });
             $(document).ajaxError(function(event, xhr, options) {
-                MessageToast.error(xhr.responseJSON?.error?.message);
+                MessageToast.show(xhr.responseJSON?.error?.message);
             });
         },
 
