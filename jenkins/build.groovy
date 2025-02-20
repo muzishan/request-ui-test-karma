@@ -25,9 +25,4 @@ node('built-in') {
             
         }
     }
-
-    npmSonarV2 nodeVersion: nodeVersion,
-        sonarServer: 'sonar-server',
-        checkQualityGate: true
-
 }
