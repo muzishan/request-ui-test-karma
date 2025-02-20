@@ -48,8 +48,14 @@ module.exports = function (config) {
 				showUI: true
 			}
 		},
+		customLaunchers: {
+			ChromeHeadlessNoSandbox: {
+				base: 'ChromeHeadless',
+				flags: ['--no-sandbox']
+			}
+		},
         reporters: ["progress", 'coverage', 'sonarqube'],
-        browsers: ["ChromeHeadless"],
+        browsers: ["ChromeHeadlessNoSandbox"],
 		singleRun: true
     });
 	require('karma-ui5/helper').configureIframeCoverage(config)
