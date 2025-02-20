@@ -19,7 +19,7 @@ node('built-in') {
         }
 
         stage('Test') {
-            docker.image('zenika/alpine-chrome').inside("""--entrypoint=''""") {
+            docker.image('zenika/alpine-chrome:with-node').inside("""--entrypoint=''""") {
                 sh 'npm run test'
             }
             
